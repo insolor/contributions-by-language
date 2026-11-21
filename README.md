@@ -71,8 +71,9 @@ GitHub token used to read contribution data. The **Update contributions chart**
 workflow runs daily at 01:00 UTC and can also be started from the Actions tab.
 It reads `contributions.toml` and pushes changes to the generated SVG and
 historical cache to the default branch using the workflow's GitHub token.
-Pushes and pull requests also verify SVG generation from the committed cache.
-Those checks use read-only permissions and require no contribution token.
+The separate **Check contributions chart** workflow verifies SVG generation
+from the committed cache on pushes and pull requests. It uses read-only
+permissions and requires no contribution token.
 
 ## Local cache
 
