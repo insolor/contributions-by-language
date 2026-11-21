@@ -4,3 +4,4 @@ theme = "dark"
 max_colors = 12
 force_other_languages = ["SCSS", "JavaScript", "Makefile", "C++", "HTML", "CSS"]
 output = "contributions.svg"
+show_legend_counts = true

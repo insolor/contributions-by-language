@@ -11,7 +11,7 @@ NO_PRIMARY_LANGUAGE = "No primary language"
 def render_svg(
     monthly: dict[date, Counter[str]], login: str, *,
     theme: str = "light", max_colors: int = DEFAULT_MAX_COLORS,
-    force_other_languages: Sequence[str] = (),
+    force_other_languages: Sequence[str] = (), show_legend_counts: bool = True,
 ) -> str:
     palette = PALETTES[theme]
     colors = palette.languages
@@ -81,6 +81,7 @@ def render_svg(
         label(left - 7, y + 4, tick * axis_max // 4, **{"text-anchor": "end"})
 
     legend = {}
+    legend_counts: Counter[str] = Counter()
     for index, (year, counts) in enumerate(annual.items()):
         x = left + (index + 0.5) * step
         values = [counts[name] for name, _ in series]
@@ -92,6 +93,7 @@ def render_svg(
         for (name, color), count in zip(series, values):
             if count:
                 legend.setdefault(name, color)
+                legend_counts[name] += count
                 segment_height = count * plot_height / axis_max
                 y -= segment_height
                 bar = rectangle(x - bar_width / 2, y, bar_width, segment_height, color)
@@ -110,6 +112,7 @@ def render_svg(
         x = 25 + column * column_width
         y = legend_top + 24 * row
         rectangle(x, y - 9, 10, 10, color)
-        label(x + 17, y, name)
+        legend_label = f"{name} ({legend_counts[name]})" if show_legend_counts else name
+        label(x + 17, y, legend_label)
 
     return tostring(svg, encoding="unicode") + "\n"

@@ -39,6 +39,7 @@ def main() -> None:
         svg = render_svg(
             monthly, login, theme=settings.theme, max_colors=settings.max_colors,
             force_other_languages=settings.force_other_languages,
+            show_legend_counts=settings.show_legend_counts,
         )
         settings.output.write_text(svg, encoding="utf-8")
     except ValidationError as error:

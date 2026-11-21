@@ -21,6 +21,7 @@ def main() -> None:
     svg = render_svg(
         monthly, settings.login, theme=settings.theme, max_colors=settings.max_colors,
         force_other_languages=settings.force_other_languages,
+        show_legend_counts=settings.show_legend_counts,
     )
     assert fromstring(svg).tag == "{http://www.w3.org/2000/svg}svg"
 

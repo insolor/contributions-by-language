@@ -65,6 +65,10 @@ boolean. Keep the token in `GITHUB_TOKEN` or `GH_TOKEN`.
 Languages listed in `force_other_languages` always go under **Other languages**.
 Language names are matched case-insensitively.
 
+Commit counts appear in the legend by default. Set `show_legend_counts = false`
+in the settings file or pass `--no-show-legend-counts` to hide them. Pass
+`--show-legend-counts` to enable them again for a run.
+
 ## Daily updates with GitHub Actions
 
 Add a repository Actions secret named `CONTRIBUTIONS_TOKEN` containing the

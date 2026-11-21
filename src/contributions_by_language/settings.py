@@ -39,6 +39,7 @@ class Settings(SettingsModel):
     force_other_languages: list[str] = Field(
         default_factory=list, description="Languages always grouped under Other languages.",
     )
+    show_legend_counts: bool = Field(True, description="Show commit counts in the chart legend.")
 
     @model_validator(mode="after")
     def validate_period(self) -> Settings:
