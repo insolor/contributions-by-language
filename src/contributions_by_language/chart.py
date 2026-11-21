@@ -62,7 +62,9 @@ def render_svg(
     def label(x, y, value, **attributes):
         SubElement(svg, "text", {"x": str(x), "y": str(y), "font-size": "11", "fill": palette.foreground, **attributes}).text = str(value)
 
-    rectangle(0, 0, width, height, palette.background, rx="12")
+    rectangle(0.5, 0.5, width - 1, height - 1, palette.background, **{
+        "rx": "11.5", "stroke": "#ffffff", "stroke-width": "1",
+    })
     label(24, 33, title, **{"font-size": "18", "font-weight": "600"})
     peak = max((sum(counts.values()) for counts in annual.values()), default=0)
     axis_max = max(4, ((peak + 3) // 4) * 4)
