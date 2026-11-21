@@ -9,6 +9,8 @@ from pydantic_settings import CliPositionalArg, CliSettingsSource
 
 from .palette import DEFAULT_MAX_COLORS, MAX_PALETTE_COLORS
 
+DEFAULT_YEARS = 5
+
 
 class Settings(SettingsModel):
     """Generate an SVG of yearly GitHub commits."""
@@ -23,9 +25,9 @@ class Settings(SettingsModel):
     login: CliPositionalArg[str | None] = Field(None, description="GitHub username.")
     config: Path | None = Field(None, description="TOML, YAML or JSON settings file.")
     all_time: bool = Field(False, description="Include all available commit history.")
-    months: int | None = Field(
-        None, ge=1, le=60,
-        description="Calendar months including the current UTC month. Default is 12.",
+    years: int | None = Field(
+        None, ge=1,
+        description=f"Calendar years including the current UTC year. Default is {DEFAULT_YEARS}.",
     )
     output: Path = Field(Path("contributions.svg"), description="Output SVG path.")
     refresh_cache: bool = Field(False, description="Fetch closed months again and update the cache.")
@@ -40,18 +42,18 @@ class Settings(SettingsModel):
 
     @model_validator(mode="after")
     def validate_period(self) -> Settings:
-        if self.all_time and self.months is not None:
-            raise ValueError("all_time and months are mutually exclusive")
+        if self.all_time and self.years is not None:
+            raise ValueError("all_time and years are mutually exclusive")
         return self
 
 
 def load_settings(args: list[str]) -> Settings:
     overrides = CliSettingsSource(Settings, cli_parse_args=args)()
-    if overrides.get("all_time") and "months" in overrides:
-        raise ValueError("--all-time and --months are mutually exclusive")
+    if overrides.get("all_time") and "years" in overrides:
+        raise ValueError("--all-time and --years are mutually exclusive")
     if overrides.get("all_time"):
-        overrides["months"] = None
-    elif "months" in overrides:
+        overrides["years"] = None
+    elif "years" in overrides:
         overrides["all_time"] = False
 
     config_arg = overrides.pop("config", None)

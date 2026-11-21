@@ -7,7 +7,7 @@ A command-line tool that generates a stacked bar chart in SVG format for a GitHu
 Run with Python 3.14 and uv. Supply a GitHub token in `GITHUB_TOKEN` or `GH_TOKEN`. If you already use an authenticated GitHub CLI, you can pass its token for this command only.
 
 ```sh
-GITHUB_TOKEN="$(gh auth token)" uv run contributions-by-language insolor --months 12
+GITHUB_TOKEN="$(gh auth token)" uv run contributions-by-language insolor --years 5
 ```
 
 Copy the generated `contributions.svg` to the root of your profile repository (for example, `insolor/insolor`) and add this to its README.
@@ -33,8 +33,9 @@ uv run --env-file .env contributions-by-language insolor --all-time
 
 With `GITHUB_TOKEN` or `GH_TOKEN` already set in your environment, omit `--env-file .env`.
 The chart starts with the earliest month that has a visible public commit contribution and
-includes years without activity through the current year. With `--months`, each
-bar includes only the months in the selected period.
+includes years without activity through the current year. Use `--years N`
+to show the current UTC year and the preceding `N - 1` calendar years. The default
+is five years unless a period is set in the settings file.
 
 ## Settings file
 
@@ -57,8 +58,8 @@ uv run --env-file .env contributions-by-language
 
 Use `--config path/to/settings.yaml` to select another file. TOML, YAML and JSON
 are supported. Command-line arguments take priority over file settings. For
-example, `--months 6` overrides `all_time = true`. The settings file can use
-either `all_time = true` or `months`, and can also set `refresh_cache` to a
+example, `--years 3` overrides `all_time = true`. The settings file can use
+either `all_time = true` or `years = 3`, and can also set `refresh_cache` to a
 boolean. Keep the token in `GITHUB_TOKEN` or `GH_TOKEN`.
 
 Languages listed in `force_other_languages` always go under **Other languages**.

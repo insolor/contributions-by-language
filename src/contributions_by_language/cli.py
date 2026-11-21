@@ -1,15 +1,14 @@
 import os
 import sys
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 
 from pydantic import ValidationError
 from yaml import YAMLError
 
 from .cache import MonthCache
-from .calendar import shift_month
 from .chart import render_svg
 from .history import fetch_history, fetch_months
-from .settings import load_settings
+from .settings import DEFAULT_YEARS, load_settings
 
 
 def main() -> None:
@@ -30,9 +29,12 @@ def main() -> None:
         if settings.all_time:
             monthly = fetch_history(login, token, now, cache, refresh=settings.refresh_cache)
         else:
-            current_month = now.date().replace(day=1)
-            months = settings.months if settings.months is not None else 12
-            period = [shift_month(current_month, offset) for offset in range(1 - months, 1)]
+            first_year = max(1, now.year - (settings.years or DEFAULT_YEARS) + 1)
+            period = [
+                date(year, month, 1)
+                for year in range(first_year, now.year + 1)
+                for month in range(1, (now.month if year == now.year else 12) + 1)
+            ]
             monthly = fetch_months(login, token, period, now, cache, refresh=settings.refresh_cache)
         svg = render_svg(
             monthly, login, theme=settings.theme, max_colors=settings.max_colors,
