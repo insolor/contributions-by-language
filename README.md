@@ -48,4 +48,4 @@ months again, for example after a repository's primary language changes.
 
 - GitHub [commit contributions](https://docs.github.com/en/graphql/reference/users#createdcommitcontribution) for public repositories. Issues, pull requests, reviews and contributions the API token cannot see are excluded.
 - Each commit is assigned to the repository's [primary language reported at fetch time](https://docs.github.com/en/graphql/reference/objects#repository). For multilingual repositories, all of their commits go into that one language.
-- Months are in UTC and include the current partial month. The chart uses up to nine colors in total. **No primary language** is gray. When the categories exceed the limit, the most active languages have their own colors and the rest are grouped under **Other languages** in yellow-green.
+- Months are in UTC and include the current partial month. The chart uses up to 12 colors in total. **No primary language** is gray. When the categories exceed the limit, the most active languages have their own colors and the rest are grouped under **Other languages** in yellow-green.

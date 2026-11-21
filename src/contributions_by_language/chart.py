@@ -5,7 +5,7 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 COLORS = (
     "#0047ab", "#e88400", "#007a4d", "#f04c9b",
     "#5d2387", "#00a6c6", "#bb1900", "#63401f",
-    "#91a621",
+    "#147d89", "#913b57", "#a1844b", "#91a621",
 )
 NO_PRIMARY_LANGUAGE = "No primary language"
 
