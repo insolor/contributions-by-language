@@ -1,0 +1,22 @@
+[project]
+name = "contributions-by-language"
+version = "0.1.0"
+description = "Generate a yearly GitHub commit chart by repository language"
+readme = "README.md"
+authors = [
+    { name = "insolor", email = "2442833+insolor@users.noreply.github.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "click>=8.2,<9",
+    "filelock>=3,<4",
+    "pydantic>=2.12,<3",
+    "tqdm>=4.67,<5",
+]
+
+[project.scripts]
+contributions-by-language = "contributions_by_language.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"

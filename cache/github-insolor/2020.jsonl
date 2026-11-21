@@ -1,0 +1,12 @@
+{"counts": {"Python": 4}, "month": "2020-01-01"}
+{"counts": {}, "month": "2020-02-01"}
+{"counts": {"Python": 1}, "month": "2020-03-01"}
+{"counts": {"Python": 3}, "month": "2020-04-01"}
+{"counts": {"No primary language": 2}, "month": "2020-05-01"}
+{"counts": {}, "month": "2020-06-01"}
+{"counts": {}, "month": "2020-07-01"}
+{"counts": {"No primary language": 1}, "month": "2020-08-01"}
+{"counts": {"CSS": 9, "Jupyter Notebook": 1}, "month": "2020-09-01"}
+{"counts": {"Jupyter Notebook": 31}, "month": "2020-10-01"}
+{"counts": {"Jupyter Notebook": 9, "Kotlin": 2, "Python": 2}, "month": "2020-11-01"}
+{"counts": {"Assembly": 23, "No primary language": 2, "Python": 7}, "month": "2020-12-01"}

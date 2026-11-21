@@ -1,0 +1,12 @@
+{"counts": {"Python": 2}, "month": "2024-01-01"}
+{"counts": {"No primary language": 1, "Python": 4}, "month": "2024-02-01"}
+{"counts": {"No primary language": 1}, "month": "2024-03-01"}
+{"counts": {"No primary language": 1, "Python": 63}, "month": "2024-04-01"}
+{"counts": {"No primary language": 1, "Python": 6}, "month": "2024-05-01"}
+{"counts": {"HTML": 1, "Python": 9}, "month": "2024-06-01"}
+{"counts": {"Python": 13}, "month": "2024-07-01"}
+{"counts": {}, "month": "2024-08-01"}
+{"counts": {"Python": 28}, "month": "2024-09-01"}
+{"counts": {"Python": 1}, "month": "2024-10-01"}
+{"counts": {"Python": 3, "Zig": 55}, "month": "2024-11-01"}
+{"counts": {"No primary language": 3, "Python": 45, "Zig": 83}, "month": "2024-12-01"}

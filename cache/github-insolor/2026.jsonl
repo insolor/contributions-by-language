@@ -1,0 +1,10 @@
+{"counts": {}, "month": "2026-01-01"}
+{"counts": {"Jupyter Notebook": 1, "Python": 4}, "month": "2026-02-01"}
+{"counts": {}, "month": "2026-03-01"}
+{"counts": {"Python": 2, "Zig": 11}, "month": "2026-04-01"}
+{"counts": {"Zig": 4}, "month": "2026-05-01"}
+{"counts": {"Python": 7, "Zig": 10}, "month": "2026-06-01"}
+{"counts": {"JavaScript": 2, "Python": 6, "Zig": 2}, "month": "2026-07-01"}
+{"counts": {"JavaScript": 16, "No primary language": 1, "Python": 8}, "month": "2026-08-01"}
+{"counts": {}, "month": "2026-09-01"}
+{"counts": {"Python": 20, "Zig": 6}, "month": "2026-10-01"}
