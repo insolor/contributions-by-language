@@ -19,6 +19,12 @@ Copy the generated `contributions.svg` to the root of your profile repository (f
 Run the command again to refresh the chart. Use `--output path.svg` to write directly to an existing local checkout of the profile repository.
 The command reports how many months it has fetched from GitHub on standard error.
 
+The default theme is light. To generate a dark chart as a separate SVG, run:
+
+```sh
+uv run --env-file .env contributions-by-language insolor --theme dark --output contributions-dark.svg
+```
+
 ## Include all available history
 
 ```sh
@@ -29,6 +35,34 @@ With `GITHUB_TOKEN` or `GH_TOKEN` already set in your environment, omit `--env-f
 The chart starts with the earliest month that has a visible public commit contribution and
 includes years without activity through the current year. With `--months`, each
 bar includes only the months in the selected period.
+
+## Settings file
+
+The command loads `contributions.toml` from the current directory if it exists.
+
+```toml
+login = "insolor"
+all_time = true
+theme = "dark"
+max_colors = 12
+force_other_languages = ["SCSS", "Jupyter Notebook", "JavaScript"]
+output = "contributions-dark.svg"
+```
+
+With the GitHub token in `.env`, run the command without repeating those settings:
+
+```sh
+uv run --env-file .env contributions-by-language
+```
+
+Use `--config path/to/settings.yaml` to select another file. TOML, YAML and JSON
+are supported. Command-line arguments take priority over file settings. For
+example, `--months 6` overrides `all_time = true`. The settings file can use
+either `all_time = true` or `months`, and can also set `refresh_cache` to a
+boolean. Keep the token in `GITHUB_TOKEN` or `GH_TOKEN`.
+
+Languages listed in `force_other_languages` always go under **Other languages**.
+Language names are matched case-insensitively.
 
 ## Local cache
 
@@ -48,4 +82,4 @@ months again, for example after a repository's primary language changes.
 
 - GitHub [commit contributions](https://docs.github.com/en/graphql/reference/users#createdcommitcontribution) for public repositories. Issues, pull requests, reviews and contributions the API token cannot see are excluded.
 - Each commit is assigned to the repository's [primary language reported at fetch time](https://docs.github.com/en/graphql/reference/objects#repository). For multilingual repositories, all of their commits go into that one language.
-- Months are in UTC and include the current partial month. The chart uses up to 12 colors in total. **No primary language** is gray. When the categories exceed the limit, the most active languages have their own colors and the rest are grouped under **Other languages** in yellow-green.
+- Months are in UTC and include the current partial month. Set `max_colors` in the file or pass `--max-colors` to limit the palette to 2–12 colors (default: 12). The limit includes **No primary language** in gray and **Other languages** in yellow-green when those categories appear.

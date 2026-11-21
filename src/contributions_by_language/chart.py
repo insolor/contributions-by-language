@@ -1,16 +1,21 @@
 from collections import Counter
+from collections.abc import Sequence
 from datetime import date
 from xml.etree.ElementTree import Element, SubElement, tostring
 
-COLORS = (
-    "#0047ab", "#e88400", "#007a4d", "#f04c9b",
-    "#5d2387", "#00a6c6", "#bb1900", "#63401f",
-    "#147d89", "#913b57", "#a1844b", "#91a621",
-)
+from .palette import MAX_PALETTE_COLORS, PALETTES
+
 NO_PRIMARY_LANGUAGE = "No primary language"
 
 
-def render_svg(monthly: dict[date, Counter[str]], login: str) -> str:
+def render_svg(
+    monthly: dict[date, Counter[str]], login: str, *,
+    theme: str = "light", max_colors: int = MAX_PALETTE_COLORS,
+    force_other_languages: Sequence[str] = (),
+) -> str:
+    palette = PALETTES[theme]
+    colors = palette.languages
+
     annual: dict[int, Counter[str]] = {}
     for month, counts in sorted(monthly.items()):
         year_counts = annual.setdefault(month.year, Counter())
@@ -18,17 +23,22 @@ def render_svg(monthly: dict[date, Counter[str]], login: str) -> str:
 
     totals = sum(annual.values(), Counter())
     has_no_primary = NO_PRIMARY_LANGUAGE in totals
-    has_other = len(totals) > len(COLORS)
-    language_slots = len(COLORS) - has_no_primary - has_other
+    forced_names = {name.casefold() for name in force_other_languages}
+    forced = {
+        name for name in totals
+        if name != NO_PRIMARY_LANGUAGE and name.casefold() in forced_names
+    }
+    has_other = bool(forced) or len(totals) > max_colors
+    language_slots = max_colors - has_no_primary - has_other
     languages = sorted(
-        (name for name in totals if name != NO_PRIMARY_LANGUAGE),
+        (name for name in totals if name != NO_PRIMARY_LANGUAGE and name not in forced),
         key=lambda name: (-totals[name], name),
     )[:language_slots]
-    series = [(name, color) for name, color in zip(languages, COLORS)]
+    series = [(name, color) for name, color in zip(languages, colors)]
     if has_no_primary:
-        series.append((NO_PRIMARY_LANGUAGE, "#737373"))
+        series.append((NO_PRIMARY_LANGUAGE, palette.no_language))
     if has_other:
-        series.append(("Other languages", COLORS[-1]))
+        series.append(("Other languages", colors[-1]))
 
     width = max(500, 80 + len(annual) * 39)
     legend_columns = max(1, min(3, len(series)))
@@ -50,9 +60,9 @@ def render_svg(monthly: dict[date, Counter[str]], login: str) -> str:
         return SubElement(svg, "rect", x=str(x), y=str(y), width=str(w), height=str(h), fill=color, **attributes)
 
     def label(x, y, value, **attributes):
-        SubElement(svg, "text", {"x": str(x), "y": str(y), "font-size": "11", "fill": "#1e293b", **attributes}).text = str(value)
+        SubElement(svg, "text", {"x": str(x), "y": str(y), "font-size": "11", "fill": palette.foreground, **attributes}).text = str(value)
 
-    rectangle(0, 0, width, height, "#f8fafc", rx="12")
+    rectangle(0, 0, width, height, palette.background, rx="12")
     label(24, 33, title, **{"font-size": "18", "font-weight": "600"})
     peak = max((sum(counts.values()) for counts in annual.values()), default=0)
     axis_max = max(4, ((peak + 3) // 4) * 4)
@@ -65,7 +75,7 @@ def render_svg(monthly: dict[date, Counter[str]], login: str) -> str:
 
     for tick in range(5):
         y = baseline - tick * plot_height / 4
-        rectangle(left, y, plot_width, 1, "#cbd5e1")
+        rectangle(left, y, plot_width, 1, palette.grid)
         label(left - 7, y + 4, tick * axis_max // 4, **{"text-anchor": "end"})
 
     legend = {}
