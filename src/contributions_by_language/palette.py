@@ -27,7 +27,7 @@ DARK = Palette(
     foreground="#e6e6e6",
     grid="#363636",
     no_language=LIGHT.no_language,
-    languages=LIGHT.languages,
+    languages=LIGHT.languages[:3] + ("#955473",) + LIGHT.languages[4:],
 )
 
 PALETTES = {"light": LIGHT, "dark": DARK}
