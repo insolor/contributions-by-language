@@ -3,14 +3,14 @@ from collections.abc import Sequence
 from datetime import date
 from xml.etree.ElementTree import Element, SubElement, tostring
 
-from .palette import MAX_PALETTE_COLORS, PALETTES
+from .palette import DEFAULT_MAX_COLORS, PALETTES
 
 NO_PRIMARY_LANGUAGE = "No primary language"
 
 
 def render_svg(
     monthly: dict[date, Counter[str]], login: str, *,
-    theme: str = "light", max_colors: int = MAX_PALETTE_COLORS,
+    theme: str = "light", max_colors: int = DEFAULT_MAX_COLORS,
     force_other_languages: Sequence[str] = (),
 ) -> str:
     palette = PALETTES[theme]

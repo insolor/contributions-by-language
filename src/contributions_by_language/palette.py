@@ -31,4 +31,5 @@ DARK = Palette(
 )
 
 PALETTES = {"light": LIGHT, "dark": DARK}
+DEFAULT_MAX_COLORS = 6
 MAX_PALETTE_COLORS = min(len(palette.languages) for palette in PALETTES.values())

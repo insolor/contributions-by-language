@@ -7,7 +7,7 @@ from pydantic import Field, model_validator
 from pydantic_config import SettingsConfig, SettingsModel
 from pydantic_settings import CliPositionalArg, CliSettingsSource
 
-from .palette import MAX_PALETTE_COLORS
+from .palette import DEFAULT_MAX_COLORS, MAX_PALETTE_COLORS
 
 
 class Settings(SettingsModel):
@@ -31,7 +31,7 @@ class Settings(SettingsModel):
     refresh_cache: bool = Field(False, description="Fetch closed months again and update the cache.")
     theme: Literal["light", "dark"] = Field("light", description="Chart theme.")
     max_colors: int = Field(
-        MAX_PALETTE_COLORS, ge=2, le=MAX_PALETTE_COLORS,
+        DEFAULT_MAX_COLORS, ge=2, le=MAX_PALETTE_COLORS,
         description="Maximum chart colors, including grouped categories.",
     )
     force_other_languages: list[str] = Field(

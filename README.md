@@ -44,7 +44,7 @@ The command loads `contributions.toml` from the current directory if it exists.
 login = "insolor"
 all_time = true
 theme = "dark"
-max_colors = 12
+max_colors = 6
 force_other_languages = ["SCSS", "Jupyter Notebook", "JavaScript"]
 output = "contributions-dark.svg"
 ```
@@ -90,4 +90,4 @@ months again, for example after a repository's primary language changes.
 
 - GitHub [commit contributions](https://docs.github.com/en/graphql/reference/users#createdcommitcontribution) for public repositories. Issues, pull requests, reviews and contributions the API token cannot see are excluded.
 - Each commit is assigned to the repository's [primary language reported at fetch time](https://docs.github.com/en/graphql/reference/objects#repository). For multilingual repositories, all of their commits go into that one language.
-- Months are in UTC and include the current partial month. Set `max_colors` in the file or pass `--max-colors` to limit the palette to 2–12 colors (default: 12). The limit includes **No primary language** in gray and **Other languages** in yellow-green when those categories appear.
+- Months are in UTC and include the current partial month. Set `max_colors` in the file or pass `--max-colors` to limit the palette to 2–12 colors (default: 6). The limit includes **No primary language** in gray and **Other languages** in yellow-green when those categories appear.
