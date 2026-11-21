@@ -64,6 +64,14 @@ boolean. Keep the token in `GITHUB_TOKEN` or `GH_TOKEN`.
 Languages listed in `force_other_languages` always go under **Other languages**.
 Language names are matched case-insensitively.
 
+## Daily updates with GitHub Actions
+
+Add a repository Actions secret named `CONTRIBUTIONS_TOKEN` containing the
+GitHub token used to read contribution data. The **Update contributions chart**
+workflow runs daily at 01:17 UTC and can also be started from the Actions tab.
+It reads `contributions.toml` and pushes changes to the generated SVG and
+historical cache to the default branch using the workflow's GitHub token.
+
 ## Local cache
 
 The first run downloads the requested history. Subsequent runs reuse completed UTC
