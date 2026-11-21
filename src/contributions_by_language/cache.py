@@ -50,14 +50,20 @@ class MonthCache:
             records = self._read_year(month.year)
             records[month] = MonthRecord(month=month, counts=dict(counts))
             data = "".join(
-                json.dumps(records[key].model_dump(mode="json"), ensure_ascii=False, sort_keys=True)
+                json.dumps(
+                    records[key].model_dump(mode="json"),
+                    ensure_ascii=False,
+                    sort_keys=True,
+                )
                 + "\n"
                 for key in sorted(records)
             )
             self._replace(path, data)
 
     def _replace(self, path: Path, data: str) -> None:
-        with NamedTemporaryFile(dir=self.directory, suffix=".tmp", delete=False) as file:
+        with NamedTemporaryFile(
+            dir=self.directory, suffix=".tmp", delete=False
+        ) as file:
             temporary_path = Path(file.name)
             try:
                 file.write(data.encode("utf-8"))

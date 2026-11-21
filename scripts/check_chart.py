@@ -19,7 +19,10 @@ def main() -> None:
             monthly[record.month] = Counter(record.counts)
 
     svg = render_svg(
-        monthly, settings.login, theme=settings.theme, max_colors=settings.max_colors,
+        monthly,
+        settings.login,
+        theme=settings.theme,
+        max_colors=settings.max_colors,
         force_other_languages=settings.force_other_languages,
         show_legend_counts=settings.show_legend_counts,
     )

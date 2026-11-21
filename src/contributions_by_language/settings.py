@@ -26,20 +26,28 @@ class Settings(SettingsModel):
     config: Path | None = Field(None, description="TOML, YAML or JSON settings file.")
     all_time: bool = Field(False, description="Include all available commit history.")
     years: int | None = Field(
-        None, ge=1,
+        None,
+        ge=1,
         description=f"Calendar years including the current UTC year. Default is {DEFAULT_YEARS}.",
     )
     output: Path = Field(Path("contributions.svg"), description="Output SVG path.")
-    refresh_cache: bool = Field(False, description="Fetch closed months again and update the cache.")
+    refresh_cache: bool = Field(
+        False, description="Fetch closed months again and update the cache."
+    )
     theme: Literal["light", "dark"] = Field("light", description="Chart theme.")
     max_colors: int = Field(
-        DEFAULT_MAX_COLORS, ge=2, le=MAX_PALETTE_COLORS,
+        DEFAULT_MAX_COLORS,
+        ge=2,
+        le=MAX_PALETTE_COLORS,
         description="Maximum chart colors, including grouped categories.",
     )
     force_other_languages: list[str] = Field(
-        default_factory=list, description="Languages always grouped under Other languages.",
+        default_factory=list,
+        description="Languages always grouped under Other languages.",
     )
-    show_legend_counts: bool = Field(True, description="Show commit counts in the chart legend.")
+    show_legend_counts: bool = Field(
+        True, description="Show commit counts in the chart legend."
+    )
 
     @model_validator(mode="after")
     def validate_period(self) -> Settings:

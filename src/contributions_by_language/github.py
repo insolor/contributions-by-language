@@ -40,10 +40,12 @@ def fetch_collection[Collection: BaseModel](
 ) -> Collection:
     request = Request(
         "https://api.github.com/graphql",
-        data=json.dumps({
-            "query": query,
-            "variables": {"login": login, **variables},
-        }).encode(),
+        data=json.dumps(
+            {
+                "query": query,
+                "variables": {"login": login, **variables},
+            }
+        ).encode(),
         headers={
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
@@ -72,13 +74,21 @@ def fetch_collection[Collection: BaseModel](
 def fetch_month(login: str, token: str, month: date, now: datetime) -> Counter[str]:
     start = datetime.combine(month, time.min, UTC)
     end = datetime.combine(shift_month(month, 1), time.min, UTC)
-    collection = fetch_collection(QUERY, MonthlyContributions, login, token, **{
-        "from": start.isoformat(),
-        "to": min(end - timedelta(seconds=1), now).isoformat(),
-        "limit": 100,
-    })
+    collection = fetch_collection(
+        QUERY,
+        MonthlyContributions,
+        login,
+        token,
+        **{
+            "from": start.isoformat(),
+            "to": min(end - timedelta(seconds=1), now).isoformat(),
+            "limit": 100,
+        },
+    )
     if len(collection.repositories) < collection.repository_count:
-        raise RuntimeError(f"GitHub returned an incomplete repository list for {month:%Y-%m}")
+        raise RuntimeError(
+            f"GitHub returned an incomplete repository list for {month:%Y-%m}"
+        )
 
     counts = Counter()
     for entry in collection.repositories:
@@ -87,7 +97,9 @@ def fetch_month(login: str, token: str, month: date, now: datetime) -> Counter[s
             continue
         contributions = entry.contributions
         if contributions.page_info.has_next_page:
-            raise RuntimeError(f"GitHub returned incomplete daily counts for {month:%Y-%m}")
+            raise RuntimeError(
+                f"GitHub returned incomplete daily counts for {month:%Y-%m}"
+            )
         language = repository.primary_language
         name = language.name if language else "No primary language"
         for day in contributions.nodes:

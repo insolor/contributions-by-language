@@ -32,8 +32,12 @@ class RepositoryCommits(BaseModel):
 
 
 class MonthlyContributions(BaseModel):
-    repository_count: NonNegativeInt = Field(alias="totalRepositoriesWithContributedCommits")
-    repositories: list[RepositoryCommits] = Field(alias="commitContributionsByRepository")
+    repository_count: NonNegativeInt = Field(
+        alias="totalRepositoriesWithContributedCommits"
+    )
+    repositories: list[RepositoryCommits] = Field(
+        alias="commitContributionsByRepository"
+    )
 
 
 class ContributionYears(BaseModel):

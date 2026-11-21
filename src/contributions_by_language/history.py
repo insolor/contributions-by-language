@@ -10,8 +10,13 @@ from .github import fetch_month, fetch_years
 
 
 def fetch_months(
-    login: str, token: str, months: list[date], now: datetime,
-    cache: MonthCache, *, refresh: bool = False,
+    login: str,
+    token: str,
+    months: list[date],
+    now: datetime,
+    cache: MonthCache,
+    *,
+    refresh: bool = False,
 ) -> dict[date, Counter[str]]:
     current_month = now.date().replace(day=1)
     monthly = {}
@@ -26,7 +31,9 @@ def fetch_months(
     if not pending:
         return monthly
 
-    with tqdm(total=len(pending), desc="Fetching commit counts", unit="month", file=sys.stderr) as progress:
+    with tqdm(
+        total=len(pending), desc="Fetching commit counts", unit="month", file=sys.stderr
+    ) as progress:
         for month in pending:
             counts = fetch_month(login, token, month, now)
             if month < current_month:
@@ -38,7 +45,12 @@ def fetch_months(
 
 
 def fetch_history(
-    login: str, token: str, now: datetime, cache: MonthCache, *, refresh: bool = False,
+    login: str,
+    token: str,
+    now: datetime,
+    cache: MonthCache,
+    *,
+    refresh: bool = False,
 ) -> dict[date, Counter[str]]:
     print("Looking up contribution years…", file=sys.stderr, flush=True)
     years = fetch_years(login, token)

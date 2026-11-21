@@ -19,7 +19,9 @@ def main() -> None:
 
     login = settings.login
     if not login:
-        raise SystemExit("Provide a GitHub username as LOGIN or set login in the settings file.")
+        raise SystemExit(
+            "Provide a GitHub username as LOGIN or set login in the settings file."
+        )
     if not (token := os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")):
         raise SystemExit("Set GITHUB_TOKEN or GH_TOKEN.")
 
@@ -27,7 +29,9 @@ def main() -> None:
     try:
         cache = MonthCache(login)
         if settings.all_time:
-            monthly = fetch_history(login, token, now, cache, refresh=settings.refresh_cache)
+            monthly = fetch_history(
+                login, token, now, cache, refresh=settings.refresh_cache
+            )
         else:
             first_year = max(1, now.year - (settings.years or DEFAULT_YEARS) + 1)
             period = [
@@ -35,9 +39,14 @@ def main() -> None:
                 for year in range(first_year, now.year + 1)
                 for month in range(1, (now.month if year == now.year else 12) + 1)
             ]
-            monthly = fetch_months(login, token, period, now, cache, refresh=settings.refresh_cache)
+            monthly = fetch_months(
+                login, token, period, now, cache, refresh=settings.refresh_cache
+            )
         svg = render_svg(
-            monthly, login, theme=settings.theme, max_colors=settings.max_colors,
+            monthly,
+            login,
+            theme=settings.theme,
+            max_colors=settings.max_colors,
             force_other_languages=settings.force_other_languages,
             show_legend_counts=settings.show_legend_counts,
         )

@@ -9,9 +9,13 @@ NO_PRIMARY_LANGUAGE = "No primary language"
 
 
 def render_svg(
-    monthly: dict[date, Counter[str]], login: str, *,
-    theme: str = "light", max_colors: int = DEFAULT_MAX_COLORS,
-    force_other_languages: Sequence[str] = (), show_legend_counts: bool = True,
+    monthly: dict[date, Counter[str]],
+    login: str,
+    *,
+    theme: str = "light",
+    max_colors: int = DEFAULT_MAX_COLORS,
+    force_other_languages: Sequence[str] = (),
+    show_legend_counts: bool = True,
 ) -> str:
     palette = PALETTES[theme]
     colors = palette.languages
@@ -25,7 +29,8 @@ def render_svg(
     has_no_primary = NO_PRIMARY_LANGUAGE in totals
     forced_names = {name.casefold() for name in force_other_languages}
     forced = {
-        name for name in totals
+        name
+        for name in totals
         if name != NO_PRIMARY_LANGUAGE and name.casefold() in forced_names
     }
     has_other = bool(forced) or len(totals) > max_colors
@@ -34,7 +39,7 @@ def render_svg(
         (name for name in totals if name != NO_PRIMARY_LANGUAGE and name not in forced),
         key=lambda name: (-totals[name], name),
     )[:language_slots]
-    series = [(name, color) for name, color in zip(languages, colors)]
+    series = list(zip(languages, colors, strict=False))
     if has_no_primary:
         series.append((NO_PRIMARY_LANGUAGE, palette.no_language))
     if has_other:
@@ -44,27 +49,66 @@ def render_svg(
     legend_columns = max(1, min(3, len(series)))
     legend_rows = (len(series) + legend_columns - 1) // legend_columns
     height = 290 + 24 * legend_rows
-    svg = Element("svg", {
-        "xmlns": "http://www.w3.org/2000/svg", "viewBox": f"0 0 {width} {height}",
-        "width": str(width), "height": str(height), "role": "img",
-        "aria-labelledby": "title description", "font-family": "system-ui, sans-serif",
-    })
+    svg = Element(
+        "svg",
+        {
+            "xmlns": "http://www.w3.org/2000/svg",
+            "viewBox": f"0 0 {width} {height}",
+            "width": str(width),
+            "height": str(height),
+            "role": "img",
+            "aria-labelledby": "title description",
+            "font-family": "system-ui, sans-serif",
+        },
+    )
     title = f"Yearly GitHub commits by language · @{login}"
     SubElement(svg, "title", id="title").text = title
     SubElement(svg, "desc", id="description").text = ". ".join(
-        f"{year}: " + (", ".join(f"{name} {count}" for name, count in sorted(counts.items())) or "0 commits")
+        f"{year}: "
+        + (
+            ", ".join(f"{name} {count}" for name, count in sorted(counts.items()))
+            or "0 commits"
+        )
         for year, counts in annual.items()
     )
 
     def rectangle(x, y, w, h, color, **attributes):
-        return SubElement(svg, "rect", x=str(x), y=str(y), width=str(w), height=str(h), fill=color, **attributes)
+        return SubElement(
+            svg,
+            "rect",
+            x=str(x),
+            y=str(y),
+            width=str(w),
+            height=str(h),
+            fill=color,
+            **attributes,
+        )
 
     def label(x, y, value, **attributes):
-        SubElement(svg, "text", {"x": str(x), "y": str(y), "font-size": "11", "fill": palette.foreground, **attributes}).text = str(value)
+        SubElement(
+            svg,
+            "text",
+            {
+                "x": str(x),
+                "y": str(y),
+                "font-size": "11",
+                "fill": palette.foreground,
+                **attributes,
+            },
+        ).text = str(value)
 
-    rectangle(0.5, 0.5, width - 1, height - 1, palette.background, **{
-        "rx": "11.5", "stroke": "#ffffff", "stroke-width": "1",
-    })
+    rectangle(
+        0.5,
+        0.5,
+        width - 1,
+        height - 1,
+        palette.background,
+        **{
+            "rx": "11.5",
+            "stroke": "#ffffff",
+            "stroke-width": "1",
+        },
+    )
     label(24, 33, title, **{"font-size": "18", "font-weight": "600"})
     peak = max((sum(counts.values()) for counts in annual.values()), default=0)
     axis_max = max(4, ((peak + 3) // 4) * 4)
@@ -90,7 +134,7 @@ def render_svg(
             values[-1] = total - sum(values[:-1])
 
         y = baseline
-        for (name, color), count in zip(series, values):
+        for (name, color), count in zip(series, values, strict=True):
             if count:
                 legend.setdefault(name, color)
                 legend_counts[name] += count
@@ -103,7 +147,12 @@ def render_svg(
         label(x, baseline + 20, year, **{"text-anchor": "middle"})
 
     if not peak:
-        label(width / 2, 145, "No public commit contributions in this period", **{"text-anchor": "middle"})
+        label(
+            width / 2,
+            145,
+            "No public commit contributions in this period",
+            **{"text-anchor": "middle"},
+        )
 
     legend_top = 275
     column_width = (width - 50) / legend_columns
