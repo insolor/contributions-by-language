@@ -23,9 +23,9 @@ LIGHT = Palette(
 )
 
 DARK = Palette(
-    background="#0d1117",
-    foreground="#e6edf3",
-    grid="#30363d",
+    background="#171717",
+    foreground="#e6e6e6",
+    grid="#363636",
     no_language=LIGHT.no_language,
     languages=LIGHT.languages,
 )
