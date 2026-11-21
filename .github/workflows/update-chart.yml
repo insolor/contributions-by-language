@@ -1,19 +1,40 @@
 name: Update contributions chart
 
 on:
+  push:
+  pull_request:
   schedule:
     - cron: '0 1 * * *'
   workflow_dispatch:
 
 permissions:
-  contents: write
-
-concurrency:
-  group: update-contributions-chart
-  cancel-in-progress: false
+  contents: read
 
 jobs:
+  check:
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the changes
+        uses: actions/checkout@v6.1.0
+        with:
+          persist-credentials: false
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: '0.13.7'
+
+      - name: Verify chart generation from the committed cache
+        run: uv run --locked python scripts/check_chart.py
+
   update:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+    concurrency:
+      group: update-contributions-chart
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
       - name: Check out the default branch

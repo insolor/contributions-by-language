@@ -68,9 +68,11 @@ Language names are matched case-insensitively.
 
 Add a repository Actions secret named `CONTRIBUTIONS_TOKEN` containing the
 GitHub token used to read contribution data. The **Update contributions chart**
-workflow runs daily at 01:17 UTC and can also be started from the Actions tab.
+workflow runs daily at 01:00 UTC and can also be started from the Actions tab.
 It reads `contributions.toml` and pushes changes to the generated SVG and
 historical cache to the default branch using the workflow's GitHub token.
+Pushes and pull requests also verify SVG generation from the committed cache.
+Those checks use read-only permissions and require no contribution token.
 
 ## Local cache
 
