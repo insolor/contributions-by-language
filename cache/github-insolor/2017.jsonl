@@ -1,12 +1,12 @@
-{"counts": {}, "month": "2017-01-01"}
-{"counts": {"Python": 11}, "month": "2017-02-01"}
-{"counts": {"Python": 20}, "month": "2017-03-01"}
-{"counts": {}, "month": "2017-04-01"}
-{"counts": {"Assembly": 3, "Python": 16}, "month": "2017-05-01"}
+{"counts": {"Python": 26}, "month": "2017-01-01"}
+{"counts": {"C": 15, "Python": 81}, "month": "2017-02-01"}
+{"counts": {"Python": 97}, "month": "2017-03-01"}
+{"counts": {"Python": 16}, "month": "2017-04-01"}
+{"counts": {"Assembly": 3, "Python": 117}, "month": "2017-05-01"}
 {"counts": {"Jupyter Notebook": 3, "Python": 2}, "month": "2017-06-01"}
-{"counts": {"Python": 7}, "month": "2017-07-01"}
-{"counts": {"Python": 5}, "month": "2017-08-01"}
+{"counts": {"Python": 15}, "month": "2017-07-01"}
+{"counts": {"Python": 25}, "month": "2017-08-01"}
 {"counts": {"Python": 2}, "month": "2017-09-01"}
 {"counts": {"Python": 3}, "month": "2017-10-01"}
-{"counts": {}, "month": "2017-11-01"}
+{"counts": {"No primary language": 3}, "month": "2017-11-01"}
 {"counts": {"Python": 3}, "month": "2017-12-01"}

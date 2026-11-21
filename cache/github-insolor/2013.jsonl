@@ -1,12 +1,12 @@
 {"counts": {}, "month": "2013-01-01"}
-{"counts": {}, "month": "2013-02-01"}
-{"counts": {}, "month": "2013-03-01"}
-{"counts": {"Euphoria": 5}, "month": "2013-04-01"}
-{"counts": {"Euphoria": 34}, "month": "2013-05-01"}
+{"counts": {"Euphoria": 5}, "month": "2013-02-01"}
+{"counts": {"Euphoria": 2}, "month": "2013-03-01"}
+{"counts": {"Euphoria": 13}, "month": "2013-04-01"}
+{"counts": {"Euphoria": 60}, "month": "2013-05-01"}
 {"counts": {"Euphoria": 17}, "month": "2013-06-01"}
-{"counts": {"Euphoria": 49}, "month": "2013-07-01"}
+{"counts": {"Euphoria": 50}, "month": "2013-07-01"}
 {"counts": {}, "month": "2013-08-01"}
-{"counts": {}, "month": "2013-09-01"}
-{"counts": {"Euphoria": 1}, "month": "2013-10-01"}
-{"counts": {"Euphoria": 4}, "month": "2013-11-01"}
-{"counts": {"Assembly": 28}, "month": "2013-12-01"}
+{"counts": {"Assembly": 20, "C": 35, "Euphoria": 1}, "month": "2013-09-01"}
+{"counts": {"C": 1, "Euphoria": 45}, "month": "2013-10-01"}
+{"counts": {"Euphoria": 19, "Python": 27}, "month": "2013-11-01"}
+{"counts": {"Assembly": 28, "Euphoria": 22, "Python": 7}, "month": "2013-12-01"}

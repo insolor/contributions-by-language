@@ -1,12 +1,12 @@
 {"counts": {}, "month": "2012-01-01"}
 {"counts": {}, "month": "2012-02-01"}
 {"counts": {}, "month": "2012-03-01"}
-{"counts": {}, "month": "2012-04-01"}
-{"counts": {}, "month": "2012-05-01"}
-{"counts": {"Euphoria": 14}, "month": "2012-06-01"}
-{"counts": {}, "month": "2012-07-01"}
-{"counts": {}, "month": "2012-08-01"}
-{"counts": {}, "month": "2012-09-01"}
-{"counts": {}, "month": "2012-10-01"}
+{"counts": {"Euphoria": 5}, "month": "2012-04-01"}
+{"counts": {"Euphoria": 77}, "month": "2012-05-01"}
+{"counts": {"Euphoria": 40}, "month": "2012-06-01"}
+{"counts": {"Euphoria": 2}, "month": "2012-07-01"}
+{"counts": {"Euphoria": 4}, "month": "2012-08-01"}
+{"counts": {"Euphoria": 2}, "month": "2012-09-01"}
+{"counts": {"Euphoria": 34}, "month": "2012-10-01"}
 {"counts": {}, "month": "2012-11-01"}
 {"counts": {}, "month": "2012-12-01"}

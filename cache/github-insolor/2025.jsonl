@@ -1,12 +1,12 @@
-{"counts": {"Python": 39, "Zig": 5}, "month": "2025-01-01"}
-{"counts": {"No primary language": 1, "Python": 3}, "month": "2025-02-01"}
-{"counts": {"Python": 2, "Zig": 6}, "month": "2025-03-01"}
-{"counts": {}, "month": "2025-04-01"}
-{"counts": {"Makefile": 1, "No primary language": 5, "Zig": 47}, "month": "2025-05-01"}
-{"counts": {"Python": 3, "Zig": 7}, "month": "2025-06-01"}
-{"counts": {"Python": 133, "Zig": 47}, "month": "2025-07-01"}
-{"counts": {"No primary language": 3, "Python": 48, "Zig": 5}, "month": "2025-08-01"}
-{"counts": {"Python": 1, "Zig": 1}, "month": "2025-09-01"}
-{"counts": {"Python": 21, "Zig": 4}, "month": "2025-10-01"}
-{"counts": {"Python": 12}, "month": "2025-11-01"}
-{"counts": {"Python": 14, "Zig": 1}, "month": "2025-12-01"}
+{"counts": {"No primary language": 8, "Python": 91, "Rust": 6, "SCSS": 11, "Zig": 5}, "month": "2025-01-01"}
+{"counts": {"Cython": 2, "No primary language": 5, "Python": 47, "SCSS": 2}, "month": "2025-02-01"}
+{"counts": {"Python": 3, "Zig": 6}, "month": "2025-03-01"}
+{"counts": {"No primary language": 2, "Python": 15, "Rust": 2, "Zig": 31}, "month": "2025-04-01"}
+{"counts": {"Makefile": 1, "No primary language": 5, "Python": 3, "Rust": 1, "SCSS": 2, "Zig": 60}, "month": "2025-05-01"}
+{"counts": {"Python": 10, "Rust": 1, "SCSS": 5, "Zig": 9}, "month": "2025-06-01"}
+{"counts": {"No primary language": 1, "Python": 155, "Rust": 8, "Zig": 49}, "month": "2025-07-01"}
+{"counts": {"C++": 1, "Cython": 19, "No primary language": 7, "Python": 104, "Rust": 3, "SCSS": 62, "Zig": 5}, "month": "2025-08-01"}
+{"counts": {"Cython": 1, "No primary language": 1, "Python": 71, "Rust": 12, "SCSS": 9, "Zig": 6}, "month": "2025-09-01"}
+{"counts": {"Cython": 14, "No primary language": 2, "Python": 81, "Rust": 1, "SCSS": 2, "Zig": 4}, "month": "2025-10-01"}
+{"counts": {"No primary language": 3, "Python": 65, "Rust": 5, "SCSS": 9}, "month": "2025-11-01"}
+{"counts": {"No primary language": 1, "Python": 38, "SCSS": 1, "Zig": 2}, "month": "2025-12-01"}
