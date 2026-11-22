@@ -31,6 +31,12 @@ Pass `--env-file .env` to have uv load the token for the command:
 uv run --env-file .env contributions-by-language username --years 5
 ```
 
+If your token is issued for more than three months, some organizations may
+block it under their [maximum token lifetime policy](https://docs.github.com/en/organizations/managing-programmatic-access-to-your-organization/setting-a-personal-access-token-policy-for-your-organization#enforcing-a-maximum-lifetime-policy-for-personal-access-tokens).
+Commits in those organizations can then be missing from the chart. Use a token
+with a lifetime of 90 days or less to reduce this risk. If you replace a token
+that had limited access, run once with `--refresh-cache` to reload historical data.
+
 Copy the generated `contributions.svg` to the root of your profile repository (for example, `username/username`) and add this to its README.
 
 ```markdown
