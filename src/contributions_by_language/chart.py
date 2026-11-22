@@ -280,6 +280,21 @@ class _SvgRenderer:
 
         return [(name, color, total) for _, _, name, color, total in sorted(legend)]
 
+    @staticmethod
+    def _get_stack_order(
+        monthly_items: Sequence[tuple[date, Counter[str]]],
+        series: Sequence[tuple[str, str]],
+        has_other: bool,
+    ) -> list[int]:
+        return list(
+            dict.fromkeys(
+                index
+                for _, counts in monthly_items
+                for index, count in enumerate(_series_counts(counts, series, has_other))
+                if count
+            )
+        )
+
     def _draw_area(
         self,
         periods: dict[date, Counter[str]],
@@ -479,21 +494,12 @@ class _SvgRenderer:
         axis_max = max(4, ((peak + 3) // 4) * 4)
         self._draw_axis(plot_width, axis_max)
         if chart_type == "line":
-            legend = self._draw_lines(
+            legend_entries = self._draw_lines(
                 plot_periods, group_by, series, values, plot_width, axis_max
             )
         elif chart_type == "area":
-            stack_order = list(
-                dict.fromkeys(
-                    index
-                    for _, counts in monthly_items
-                    for index, count in enumerate(
-                        _series_counts(counts, series, has_other)
-                    )
-                    if count
-                )
-            )
-            legend = self._draw_area(
+            stack_order = self._get_stack_order(monthly_items, series, has_other)
+            legend_entries = self._draw_area(
                 plot_periods,
                 group_by,
                 series,
@@ -503,7 +509,7 @@ class _SvgRenderer:
                 axis_max,
             )
         else:
-            legend = self._draw_bars(
+            legend_entries = self._draw_bars(
                 plot_periods, group_by, series, has_other, plot_width, axis_max
             )
 
@@ -515,7 +521,7 @@ class _SvgRenderer:
                 **{"text-anchor": "middle"},
             )
 
-        self._draw_legend(legend, width, legend_columns, show_legend_counts)
+        self._draw_legend(legend_entries, width, legend_columns, show_legend_counts)
         return tostring(self.svg, encoding="unicode") + "\n"
 
 
