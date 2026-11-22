@@ -298,11 +298,14 @@ class _SvgRenderer:
         xs = [self.PLOT_LEFT + (index + 0.5) * step for index in range(len(rows))]
         scale = self.PLOT_HEIGHT / axis_max
         cumulative = [0] * len(rows)
+        stack_order = dict.fromkeys(
+            index for row in rows for index, count in enumerate(row) if count
+        )
         legend = []
-        for index, (name, color) in enumerate(series):
+        for index in stack_order:
+            name, color = series[index]
             counts = [row[index] for row in rows]
-            if not (total := sum(counts)):
-                continue
+            total = sum(counts)
             lower = [
                 (x, self.PLOT_BASELINE - count * scale)
                 for x, count in zip(xs, cumulative, strict=True)
@@ -339,9 +342,8 @@ class _SvgRenderer:
                 for period, count in zip(visible_periods, counts, strict=True)
                 if count
             )
-            first = next(position for position, count in enumerate(counts) if count)
-            legend.append((first, index, name, color, total))
-        return [(name, color, total) for _, _, name, color, total in sorted(legend)]
+            legend.append((name, color, total))
+        return legend
 
     def _draw_year_markers(
         self, periods: dict[date, Counter[str]], step: float

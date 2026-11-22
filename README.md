@@ -69,6 +69,7 @@ for stacked bars. Lines reach zero on either side of a gap and break between
 consecutive periods with zero commits.
 Use `--chart-type area` for a smoothed stacked area chart. Each band shows the
 commits for one language, and the top edge shows the total for each period.
+Languages are stacked from bottom to top in order of first appearance.
 
 ## Settings file
 
