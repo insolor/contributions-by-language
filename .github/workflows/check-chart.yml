@@ -27,5 +27,8 @@ jobs:
       - name: Check Python formatting
         run: uv run --locked ruff format --check .
 
+      - name: Check Python types
+        run: uv run --locked mypy
+
       - name: Verify chart generation from the committed cache
         run: uv run --locked python scripts/check_chart.py

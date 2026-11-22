@@ -62,12 +62,14 @@ class _SvgRenderer:
         return SubElement(
             self.svg,
             "rect",
-            x=str(x),
-            y=str(y),
-            width=str(width),
-            height=str(height),
-            fill=color,
-            **attributes,
+            {
+                "x": str(x),
+                "y": str(y),
+                "width": str(width),
+                "height": str(height),
+                "fill": color,
+                **attributes,
+            },
         )
 
     def _label(
@@ -175,7 +177,7 @@ class _SvgRenderer:
 
             bar_left = x - bar_width / 2 if yearly else self.PLOT_LEFT + index * step
             period_label = _period_label(period, group_by)
-            y = self.PLOT_BASELINE
+            y: float = self.PLOT_BASELINE
             for (name, color), count in zip(series, values, strict=True):
                 if count:
                     legend.setdefault(name, color)
@@ -231,7 +233,7 @@ class _SvgRenderer:
             first = next(position for position, count in enumerate(counts) if count)
             legend.append((first, index, name, color, total))
             segments = []
-            segment = []
+            segment: list[tuple[float, float, date, int | None]] = []
             for point in points:
                 count = point[3]
                 if segment and (count is None or (count == 0 and segment[-1][3] == 0)):
@@ -451,8 +453,8 @@ class _SvgRenderer:
             last_year = next(reversed(periods)).year
             plot_periods = {}
             for year in range(first_year, last_year + 1):
-                for month in range(1, 13, months_per_bar):
-                    period = date(year, month, 1)
+                for month_number in range(1, 13, months_per_bar):
+                    period = date(year, month_number, 1)
                     plot_periods[period] = periods.get(period, Counter())
 
         year_count = len({period.year for period in plot_periods})
@@ -463,6 +465,7 @@ class _SvgRenderer:
         self.svg = self._create_svg(width, height)
         self._draw_header(width, height, login, periods, group_by)
         plot_width = width - self.PLOT_LEFT - 24
+        values: dict[date, list[int]] = {}
         if chart_type != "bar":
             first_period = next(iter(periods), None)
             values = {

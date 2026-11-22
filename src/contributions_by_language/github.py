@@ -36,7 +36,7 @@ query($login: String!) {
 async def fetch_collection[Collection: BaseModel](
     client: httpx.AsyncClient,
     query: str,
-    model: type[Collection],
+    model: type[GraphQLResponse[Collection]],
     login: str,
     **variables: str | int,
 ) -> Collection:
@@ -54,7 +54,7 @@ async def fetch_collection[Collection: BaseModel](
         reason = str(error) or type(error).__name__
         raise RuntimeError(f"GitHub API request failed: {reason}") from error
 
-    envelope = GraphQLResponse[model].model_validate_json(response.content)
+    envelope = model.model_validate_json(response.content)
     if envelope.errors:
         messages = "; ".join(error.message for error in envelope.errors)
         raise RuntimeError(f"GitHub API: {messages}")
@@ -70,23 +70,20 @@ async def fetch_month(
 ) -> Counter[str]:
     start = datetime.combine(month, time.min, UTC)
     end = datetime.combine(shift_month(month, 1), time.min, UTC)
+    variables: dict[str, str | int] = {
+        "from": start.isoformat(),
+        "to": min(end - timedelta(seconds=1), now).isoformat(),
+        "limit": 100,
+    }
     collection = await fetch_collection(
-        client,
-        QUERY,
-        MonthlyContributions,
-        login,
-        **{
-            "from": start.isoformat(),
-            "to": min(end - timedelta(seconds=1), now).isoformat(),
-            "limit": 100,
-        },
+        client, QUERY, GraphQLResponse[MonthlyContributions], login, **variables
     )
     if len(collection.repositories) < collection.repository_count:
         raise RuntimeError(
             f"GitHub returned an incomplete repository list for {month:%Y-%m}"
         )
 
-    counts = Counter()
+    counts: Counter[str] = Counter()
     for entry in collection.repositories:
         repository = entry.repository
         if repository.visibility != "PUBLIC":
@@ -106,5 +103,7 @@ async def fetch_month(
 
 
 async def fetch_years(client: httpx.AsyncClient, login: str) -> set[int]:
-    collection = await fetch_collection(client, YEARS_QUERY, ContributionYears, login)
+    collection = await fetch_collection(
+        client, YEARS_QUERY, GraphQLResponse[ContributionYears], login
+    )
     return set(collection.years)

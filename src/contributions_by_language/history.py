@@ -37,18 +37,17 @@ async def fetch_months(
 
     limit = asyncio.Semaphore(MAX_CONCURRENT_REQUESTS)
 
-    async def download(month: date) -> Counter[str]:
+    async def download(month: date) -> tuple[date, Counter[str]]:
         async with limit:
-            return await fetch_month(client, login, month, now)
+            return month, await fetch_month(client, login, month, now)
 
     with tqdm(
         total=len(pending), desc="Fetching commit counts", unit="month", file=sys.stderr
     ) as progress:
-        requests = {asyncio.create_task(download(month)): month for month in pending}
+        requests = [asyncio.create_task(download(month)) for month in pending]
         try:
             async for request in asyncio.as_completed(requests):
-                month = requests[request]
-                counts = request.result()
+                month, counts = request.result()
                 if month < current_month:
                     cache.put(month, counts)
                 monthly[month] = counts
