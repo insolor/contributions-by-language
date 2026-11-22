@@ -23,6 +23,7 @@ async def fetch_months(
     refresh: bool = False,
     include_private: bool = False,
 ) -> dict[date, Counter[str]]:
+    """Load monthly counts from the cache or concurrent GitHub requests."""
     current_month = now.date().replace(day=1)
     monthly = {}
     pending = []
@@ -43,6 +44,7 @@ async def fetch_months(
     limit = asyncio.Semaphore(MAX_CONCURRENT_REQUESTS)
 
     async def download(month: date) -> tuple[date, Counter[str], Counter[str] | None]:
+        """Fetch one month within the concurrent request limit."""
         async with limit:
             counts, private_counts = await fetch_month(
                 client, login, month, now, include_private=include_private
@@ -78,6 +80,7 @@ async def fetch_history(
     refresh: bool = False,
     include_private: bool = False,
 ) -> dict[date, Counter[str]]:
+    """Load the contribution history through the current month."""
     print("Looking up contribution years…", file=sys.stderr, flush=True)
     years = sorted(await fetch_years(client, login))
     year_list = ", ".join(map(str, years)) or "none"

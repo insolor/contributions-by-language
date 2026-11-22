@@ -26,7 +26,7 @@ requires = ["uv_build>=0.13.7,<0.14.0"]
 build-backend = "uv_build"
 
 [tool.ruff.lint]
-select = ["E4", "E7", "E9", "F", "I", "UP", "B"]
+select = ["E4", "E7", "E9", "F", "I", "UP", "B", "D101", "D102", "D103", "D105", "D106", "D107"]
 
 [tool.mypy]
 strict = true

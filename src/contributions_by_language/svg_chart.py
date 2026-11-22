@@ -13,6 +13,8 @@ type ChartType = Literal["bar", "line", "area"]
 
 @dataclass(frozen=True)
 class ChartData:
+    """Hold the prepared values, series, and metadata needed to draw a chart."""
+
     title: str
     description: str
     periods: list[date]
@@ -25,6 +27,7 @@ class ChartData:
 
 
 def period_label(period: date, group_by: GroupBy) -> str:
+    """Format a period for display at the requested granularity."""
     if group_by == "quarter":
         return f"{period.year} Q{(period.month - 1) // 3 + 1}"
     if group_by == "month":
@@ -33,6 +36,7 @@ def period_label(period: date, group_by: GroupBy) -> str:
 
 
 def _smooth_curve(points: Sequence[tuple[float, float]]) -> list[str]:
+    """Build cubic Bézier commands between consecutive points."""
     commands = []
     for (x0, y0), (x1, y1) in pairwise(points):
         midpoint = (x0 + x1) / 2
@@ -43,6 +47,8 @@ def _smooth_curve(points: Sequence[tuple[float, float]]) -> list[str]:
 
 
 class SvgChartRenderer:
+    """Draw prepared chart data as SVG using the selected palette."""
+
     PLOT_LEFT = 56
     PLOT_BASELINE = 224
     PLOT_HEIGHT = 156
@@ -50,6 +56,7 @@ class SvgChartRenderer:
     svg: Element
 
     def __init__(self, palette: Palette) -> None:
+        """Set the palette used to draw the chart."""
         self.palette = palette
 
     def _rectangle(
@@ -61,6 +68,7 @@ class SvgChartRenderer:
         color: str,
         **attributes: str,
     ) -> Element:
+        """Add a filled rectangle to the current SVG."""
         return SubElement(
             self.svg,
             "rect",
@@ -81,6 +89,7 @@ class SvgChartRenderer:
         value: str | int,
         **attributes: str,
     ) -> None:
+        """Add a text label to the current SVG."""
         SubElement(
             self.svg,
             "text",
@@ -95,6 +104,7 @@ class SvgChartRenderer:
 
     @staticmethod
     def _create_svg(width: int, height: int) -> Element:
+        """Create the root SVG element with size and accessibility attributes."""
         return Element(
             "svg",
             {
@@ -115,6 +125,7 @@ class SvgChartRenderer:
         title: str,
         description: str,
     ) -> None:
+        """Draw the chart frame and title and attach accessible metadata."""
         SubElement(self.svg, "title", id="title").text = title
         SubElement(self.svg, "desc", id="description").text = description
 
@@ -138,6 +149,7 @@ class SvgChartRenderer:
         )
 
     def _draw_axis(self, plot_width: int, axis_max: int) -> None:
+        """Draw the horizontal grid and commit count labels."""
         for tick in range(5):
             y = self.PLOT_BASELINE - tick * self.PLOT_HEIGHT / 4
             self._rectangle(self.PLOT_LEFT, y, plot_width, 1, self.palette.grid)
@@ -157,6 +169,7 @@ class SvgChartRenderer:
         plot_width: int,
         axis_max: int,
     ) -> None:
+        """Draw stacked bars and their year markers."""
         step = plot_width / max(1, len(periods))
         yearly = group_by == "year"
         bar_width = min(32, step * 0.7) if yearly else step
@@ -188,6 +201,7 @@ class SvgChartRenderer:
         plot_width: int,
         axis_max: int,
     ) -> None:
+        """Draw smoothed lines with gaps for runs of zero commits."""
         step = plot_width / max(1, len(periods))
         self._draw_year_markers(periods, step)
         for index, (name, color) in enumerate(series):
@@ -268,6 +282,7 @@ class SvgChartRenderer:
         plot_width: int,
         axis_max: int,
     ) -> None:
+        """Draw filled language layers in the prepared stacking order."""
         step = plot_width / max(1, len(periods))
         self._draw_year_markers(periods, step)
         if not values_by_period:
@@ -321,6 +336,7 @@ class SvgChartRenderer:
             )
 
     def _draw_year_markers(self, periods: Sequence[date], step: float) -> None:
+        """Draw year boundaries and centered year labels."""
         start = 0
         for year, group in groupby(periods, key=lambda period: period.year):
             size = sum(1 for _ in group)
@@ -348,6 +364,7 @@ class SvgChartRenderer:
         columns: int,
         show_legend_counts: bool,
     ) -> None:
+        """Draw the prepared legend entries with optional commit totals."""
         legend_top = 275
         column_width = (width - 50) / columns
         for index, (name, color, count) in enumerate(legend):
@@ -366,6 +383,7 @@ class SvgChartRenderer:
         group_by: GroupBy,
         chart_type: ChartType,
     ) -> str:
+        """Draw the requested chart style and serialize the SVG."""
         year_count = len({period.year for period in data.periods})
         width = max(500, 80 + year_count * 39)
         legend_columns = max(1, min(3, len(data.series)))

@@ -10,13 +10,18 @@ from pydantic import BaseModel, NonNegativeInt, ValidationError
 
 
 class MonthRecord(BaseModel):
+    """Store a month's public and optional private counts by language."""
+
     month: date
     counts: dict[str, NonNegativeInt]
     private_counts: dict[str, NonNegativeInt] | None = None
 
 
 class MonthCache:
+    """Read and update a user's yearly JSONL cache files."""
+
     def __init__(self, login: str) -> None:
+        """Locate the user's cache relative to the current Git checkout."""
         cwd = Path.cwd()
         root = next(
             (path for path in (cwd, *cwd.parents) if (path / ".git").exists()),
@@ -26,6 +31,7 @@ class MonthCache:
         self.directory = root / "cache" / account
 
     def get(self, month: date, *, include_private: bool = False) -> Counter[str] | None:
+        """Return cached counts, or None if the requested data was not cached."""
         record = self._read_year(month.year).get(month)
         if record is None:
             return None
@@ -37,6 +43,7 @@ class MonthCache:
         return counts
 
     def _read_year(self, year: int) -> dict[date, MonthRecord]:
+        """Load valid month records from the given year's cache file."""
         path = self.directory / f"{year:04}.jsonl"
         try:
             lines = path.read_bytes().splitlines()
@@ -59,6 +66,7 @@ class MonthCache:
         *,
         private_counts: Counter[str] | None = None,
     ) -> None:
+        """Save monthly counts while retaining any previously cached private counts."""
         self.directory.mkdir(parents=True, exist_ok=True)
         path = self.directory / f"{month.year:04}.jsonl"
         with FileLock(path.with_suffix(".lock"), timeout=30):
@@ -84,6 +92,7 @@ class MonthCache:
             self._replace(path, data)
 
     def _replace(self, path: Path, data: str) -> None:
+        """Atomically replace a cache file with the serialized records."""
         with NamedTemporaryFile(
             dir=self.directory, suffix=".tmp", delete=False
         ) as file:

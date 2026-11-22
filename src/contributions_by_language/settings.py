@@ -63,12 +63,14 @@ class Settings(SettingsModel):
 
     @model_validator(mode="after")
     def validate_period(self) -> Settings:
+        """Reject configurations that specify both history modes."""
         if self.all_time and self.years is not None:
             raise ValueError("all_time and years are mutually exclusive")
         return self
 
 
 def load_settings(args: list[str]) -> Settings:
+    """Load chart settings and apply command-line overrides."""
     overrides = CliSettingsSource(Settings, cli_parse_args=args)()
     if overrides.get("all_time") and "years" in overrides:
         raise ValueError("--all-time and --years are mutually exclusive")
@@ -85,6 +87,8 @@ def load_settings(args: list[str]) -> Settings:
         raise ValueError(f"Settings file not found: {path}")
 
     class FileSettings(Settings):
+        """Bind the selected configuration file to the settings model."""
+
         model_config = SettingsConfig(config_file=path)
 
     return FileSettings(**overrides)

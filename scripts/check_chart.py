@@ -7,6 +7,7 @@ from contributions_by_language.settings import load_settings
 
 
 def main() -> None:
+    """Verify that cached contribution data renders as a valid SVG."""
     settings = load_settings([])
     if not settings.login:
         raise SystemExit("Set login in contributions.toml")

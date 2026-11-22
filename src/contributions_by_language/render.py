@@ -20,6 +20,7 @@ def render_svg_chart(
     group_by: GroupBy = "year",
     chart_type: ChartType = "bar",
 ) -> str:
+    """Prepare contribution data and render an SVG with the selected theme."""
     if title is None:
         frequency = {"year": "Yearly", "quarter": "Quarterly", "month": "Monthly"}
         title = f"{frequency[group_by]} GitHub commits by language · @{login}"

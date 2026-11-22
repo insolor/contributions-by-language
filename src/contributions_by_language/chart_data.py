@@ -12,6 +12,7 @@ OTHER_LANGUAGES = "Other languages"
 def _series_counts(
     counts: Counter[str], series: Sequence[tuple[str, str]], has_other: bool
 ) -> list[int]:
+    """Align a period's counts with the selected chart series."""
     values = [counts[name] for name, _ in series]
     if has_other:
         values[-1] = sum(counts.values()) - sum(values[:-1])
@@ -23,6 +24,7 @@ def _get_stack_order(
     series: Sequence[tuple[str, str]],
     has_other: bool,
 ) -> list[int]:
+    """Order area layers by the first month with commits in each series."""
     return list(
         dict.fromkeys(
             index
@@ -36,6 +38,7 @@ def _get_stack_order(
 def _aggregate_periods(
     monthly_items: Sequence[tuple[date, Counter[str]]], months_per_bar: int
 ) -> dict[date, Counter[str]]:
+    """Sum monthly counts into the requested calendar periods."""
     periods: dict[date, Counter[str]] = {}
     for month, counts in monthly_items:
         start_month = (month.month - 1) // months_per_bar * months_per_bar + 1
@@ -53,6 +56,7 @@ def _select_series(
     force_other_languages: Sequence[str],
     show_other_languages: bool,
 ) -> tuple[list[tuple[str, str]], bool]:
+    """Select the displayed categories and assign their colors."""
     has_no_primary = NO_PRIMARY_LANGUAGE in totals
     forced_names = {name.casefold() for name in force_other_languages}
     forced = {
@@ -81,6 +85,7 @@ def _select_series(
 def _complete_plot_periods(
     periods: dict[date, Counter[str]], months_per_bar: int, chart_type: ChartType
 ) -> dict[date, Counter[str]]:
+    """Fill missing slots across the displayed calendar years."""
     plot_periods = periods
     if periods and (months_per_bar < 12 or chart_type != "bar"):
         first_year = next(iter(periods)).year
@@ -99,6 +104,7 @@ def _get_legend_entries(
     series: Sequence[tuple[str, str]],
     stack_order: Sequence[int],
 ) -> list[tuple[str, str, int]]:
+    """Summarize series counts and place special categories last."""
     legend_entries = [
         (*series[index], sum(row[index] for row in values.values()))
         for index in stack_order
@@ -109,6 +115,7 @@ def _get_legend_entries(
 
 
 def _describe_periods(periods: dict[date, Counter[str]], group_by: GroupBy) -> str:
+    """Describe the recorded counts for the SVG's accessible description."""
     return ". ".join(
         f"{period_label(period, group_by)}: "
         + (
@@ -130,6 +137,7 @@ def prepare_chart_data(
     group_by: GroupBy,
     chart_type: ChartType,
 ) -> ChartData:
+    """Prepare series, values, legend entries, and scale for rendering."""
     months_per_bar = {"year": 12, "quarter": 3, "month": 1}[group_by]
     monthly_items = sorted(monthly.items())
     periods = _aggregate_periods(monthly_items, months_per_bar)

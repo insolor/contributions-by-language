@@ -40,6 +40,7 @@ async def fetch_collection[Collection: BaseModel](
     login: str,
     **variables: str | int,
 ) -> Collection:
+    """Send a GraphQL request and validate its response envelope."""
     try:
         response = await client.post(
             "https://api.github.com/graphql",
@@ -73,6 +74,7 @@ async def fetch_month(
     *,
     include_private: bool = False,
 ) -> tuple[Counter[str], Counter[str] | None]:
+    """Count a month's commits by language and repository visibility."""
     start = datetime.combine(month, time.min, UTC)
     end = datetime.combine(shift_month(month, 1), time.min, UTC)
     variables: dict[str, str | int] = {
@@ -115,6 +117,7 @@ async def fetch_month(
 
 
 async def fetch_years(client: httpx.AsyncClient, login: str) -> set[int]:
+    """Return the years with contributions reported by GitHub."""
     collection = await fetch_collection(
         client, YEARS_QUERY, GraphQLResponse[ContributionYears], login
     )

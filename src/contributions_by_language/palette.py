@@ -6,6 +6,8 @@ from importlib.resources import files
 
 @dataclass(frozen=True)
 class Palette:
+    """Define a chart theme's styling and language color preferences."""
+
     background: str
     foreground: str
     grid: str
@@ -68,6 +70,7 @@ MAX_PALETTE_COLORS = min(len(palette.languages) for palette in PALETTES.values()
 
 @cache
 def linguist_colors() -> dict[str, str]:
+    """Load the bundled Linguist colors indexed by case-folded name."""
     data = files("contributions_by_language").joinpath("linguist_colors.json")
     colors = json.loads(data.read_text(encoding="utf-8"))
     return {name.casefold(): color for name, color in colors.items()}

@@ -14,6 +14,7 @@ from .settings import DEFAULT_YEARS, Settings, load_settings
 
 
 def main() -> None:
+    """Load settings and credentials and run the chart generator."""
     try:
         settings = load_settings(sys.argv[1:])
     except (OSError, TypeError, ValueError, YAMLError) as error:
@@ -38,6 +39,7 @@ def main() -> None:
 
 
 async def _generate_chart(settings: Settings, login: str, token: str) -> None:
+    """Fetch the selected history and write the rendered SVG."""
     now = datetime.now(UTC).replace(microsecond=0)
     cache = MonthCache(login)
     async with AsyncClient(
