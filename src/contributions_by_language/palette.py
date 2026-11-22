@@ -10,6 +10,7 @@ class Palette:
     foreground: str
     grid: str
     no_language: str
+    other_languages: str
     languages: tuple[str, ...]
     use_linguist: bool = False
 
@@ -19,6 +20,7 @@ LIGHT = Palette(
     foreground="#1e293b",
     grid="#cbd5e1",
     no_language="#737373",
+    other_languages="#657d90",
     use_linguist=True,
     languages=(
         "#0047ab",
@@ -41,6 +43,7 @@ DARK = Palette(
     foreground="#e6e6e6",
     grid="#363636",
     no_language="#737373",
+    other_languages="#657d90",
     use_linguist=True,
     languages=(
         "#0047ab",

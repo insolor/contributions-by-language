@@ -40,6 +40,7 @@ def _smooth_curve(points: Sequence[tuple[float, float]]) -> list[str]:
 
 class _SvgRenderer:
     NO_PRIMARY_LANGUAGE = "No primary language"
+    OTHER_LANGUAGES = "Other languages"
     PLOT_LEFT = 56
     PLOT_BASELINE = 224
     PLOT_HEIGHT = 156
@@ -377,7 +378,9 @@ class _SvgRenderer:
     ) -> None:
         legend_top = 275
         column_width = (width - 50) / columns
-        for index, (name, color, count) in enumerate(legend):
+        special_order = {self.OTHER_LANGUAGES: 1, self.NO_PRIMARY_LANGUAGE: 2}
+        ordered = sorted(legend, key=lambda entry: special_order.get(entry[0], 0))
+        for index, (name, color, count) in enumerate(ordered):
             row, column = divmod(index, columns)
             x = 25 + column * column_width
             y = legend_top + 24 * row
@@ -432,7 +435,7 @@ class _SvgRenderer:
         if has_no_primary:
             series.append((self.NO_PRIMARY_LANGUAGE, self.palette.no_language))
         if has_other:
-            series.append(("Other languages", colors[-1]))
+            series.append((self.OTHER_LANGUAGES, self.palette.other_languages))
         if not show_other_languages:
             displayed = {name for name, _ in series}
             periods = {
