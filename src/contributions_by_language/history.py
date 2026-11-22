@@ -79,11 +79,13 @@ async def fetch_history(
     include_private: bool = False,
 ) -> dict[date, Counter[str]]:
     print("Looking up contribution years…", file=sys.stderr, flush=True)
-    years = await fetch_years(client, login)
+    years = sorted(await fetch_years(client, login))
+    year_list = ", ".join(map(str, years)) or "none"
+    print(f"Contribution years: {year_list}", file=sys.stderr, flush=True)
     current_month = now.date().replace(day=1)
     months = [
         date(year, month, 1)
-        for year in sorted(years)
+        for year in years
         for month in range(1, 13)
         if (year, month) <= (now.year, now.month)
     ]
