@@ -131,7 +131,7 @@ class _SvgRenderer:
             height - 1,
             self.palette.background,
             **{
-                "rx": "11.5",
+                "rx": "4.5",
                 "stroke": "#ffffff",
                 "stroke-width": "1",
             },
