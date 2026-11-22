@@ -36,7 +36,7 @@ class Settings(SettingsModel):
         False, description="Fetch closed months again and update the cache."
     )
     theme: Literal["light", "dark"] = Field("light", description="Chart theme.")
-    chart_type: ChartType = Field("bar", description="Chart style: bar or line.")
+    chart_type: ChartType = Field("bar", description="Chart style: bar, line or area.")
     group_by: GroupBy = Field(
         "year", description="Bar interval: year, quarter or month."
     )

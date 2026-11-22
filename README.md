@@ -1,6 +1,6 @@
 # Contributions by language
 
-A command-line tool that generates stacked bar and smoothed line charts in SVG format for a GitHub profile README. The charts show commit contributions by the primary language of each repository for calendar years, quarters or months.
+A command-line tool that generates bar, line and stacked area charts in SVG format for a GitHub profile README. The charts show commit contributions by the primary language of each repository for calendar years, quarters or months.
 
 ![Yearly GitHub commits by repository language](contributions.svg)
 
@@ -67,6 +67,8 @@ space for periods outside the available data. Segment tooltips identify the quar
 Use `--chart-type line` for a smoothed line per language or `--chart-type bar`
 for stacked bars. Lines reach zero on either side of a gap and break between
 consecutive periods with zero commits.
+Use `--chart-type area` for a smoothed stacked area chart. Each band shows the
+commits for one language, and the top edge shows the total for each period.
 
 ## Settings file
 

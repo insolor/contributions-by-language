@@ -8,7 +8,7 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from .palette import DEFAULT_MAX_COLORS, PALETTES, Palette, linguist_colors
 
 type GroupBy = Literal["year", "quarter", "month"]
-type ChartType = Literal["bar", "line"]
+type ChartType = Literal["bar", "line", "area"]
 
 
 def _period_label(period: date, group_by: GroupBy) -> str:
@@ -26,6 +26,16 @@ def _series_counts(
     if has_other:
         values[-1] = sum(counts.values()) - sum(values[:-1])
     return values
+
+
+def _smooth_curve(points: Sequence[tuple[float, float]]) -> list[str]:
+    commands = []
+    for (x0, y0), (x1, y1) in pairwise(points):
+        midpoint = (x0 + x1) / 2
+        commands.append(
+            f"C {midpoint:.3f} {y0:.3f} {midpoint:.3f} {y1:.3f} {x1:.3f} {y1:.3f}"
+        )
+    return commands
 
 
 class _SvgRenderer:
@@ -232,19 +242,23 @@ class _SvgRenderer:
                 segments.append(segment)
 
             for segment in segments:
-                x, y, _, _ = segment[0]
-                if len(segment) == 1:
+                curve = [(x, y) for x, y, _, _ in segment]
+                _, _, first_period, first_count = segment[0]
+                if (
+                    group_by == "year"
+                    and first_period == next(iter(periods))
+                    and first_count
+                ):
+                    curve.insert(0, (self.PLOT_LEFT, self.PLOT_BASELINE))
+                x, y = curve[0]
+                if len(curve) == 1:
                     half_width = min(step / 4, 3)
                     commands = [
                         f"M {x - half_width:.3f} {y:.3f} H {x + half_width:.3f}"
                     ]
                 else:
                     commands = [f"M {x:.3f} {y:.3f}"]
-                    for (x0, y0, _, _), (x1, y1, _, _) in pairwise(segment):
-                        midpoint = (x0 + x1) / 2
-                        commands.append(
-                            f"C {midpoint:.3f} {y0:.3f} {midpoint:.3f} {y1:.3f} {x1:.3f} {y1:.3f}"
-                        )
+                    commands.extend(_smooth_curve(curve))
                 path = SubElement(
                     self.svg,
                     "path",
@@ -261,6 +275,72 @@ class _SvgRenderer:
                     for _, _, period, count in segment
                 )
 
+        return [(name, color, total) for _, _, name, color, total in sorted(legend)]
+
+    def _draw_area(
+        self,
+        periods: dict[date, Counter[str]],
+        group_by: GroupBy,
+        series: Sequence[tuple[str, str]],
+        values_by_period: dict[date, list[int]],
+        plot_width: int,
+        axis_max: int,
+    ) -> list[tuple[str, str, int]]:
+        step = plot_width / max(1, len(periods))
+        self._draw_year_markers(periods, step)
+        if not values_by_period:
+            return []
+
+        last_period = next(reversed(values_by_period))
+        visible_periods = [period for period in periods if period <= last_period]
+        empty_row = [0] * len(series)
+        rows = [values_by_period.get(period, empty_row) for period in visible_periods]
+        xs = [self.PLOT_LEFT + (index + 0.5) * step for index in range(len(rows))]
+        scale = self.PLOT_HEIGHT / axis_max
+        cumulative = [0] * len(rows)
+        legend = []
+        for index, (name, color) in enumerate(series):
+            counts = [row[index] for row in rows]
+            if not (total := sum(counts)):
+                continue
+            lower = [
+                (x, self.PLOT_BASELINE - count * scale)
+                for x, count in zip(xs, cumulative, strict=True)
+            ]
+            cumulative = [
+                base + count for base, count in zip(cumulative, counts, strict=True)
+            ]
+            upper = [
+                (x, self.PLOT_BASELINE - count * scale)
+                for x, count in zip(xs, cumulative, strict=True)
+            ]
+            if group_by == "year":
+                left_edge = (self.PLOT_LEFT, self.PLOT_BASELINE)
+                lower.insert(0, left_edge)
+                upper.insert(0, left_edge)
+            elif len(xs) == 1:
+                x, upper_y = upper[0]
+                _, lower_y = lower[0]
+                upper = [(x - step / 4, upper_y), (x + step / 4, upper_y)]
+                lower = [(x - step / 4, lower_y), (x + step / 4, lower_y)]
+            lower.reverse()
+            x0, y0 = upper[0]
+            x1, y1 = lower[0]
+            commands = [
+                f"M {x0:.3f} {y0:.3f}",
+                *_smooth_curve(upper),
+                f"L {x1:.3f} {y1:.3f}",
+                *_smooth_curve(lower),
+                "Z",
+            ]
+            path = SubElement(self.svg, "path", d=" ".join(commands), fill=color)
+            SubElement(path, "title").text = "\n".join(
+                f"{_period_label(period, group_by)}, {name}: {count}"
+                for period, count in zip(visible_periods, counts, strict=True)
+                if count
+            )
+            first = next(position for position, count in enumerate(counts) if count)
+            legend.append((first, index, name, color, total))
         return [(name, color, total) for _, _, name, color, total in sorted(legend)]
 
     def _draw_year_markers(
@@ -361,7 +441,7 @@ class _SvgRenderer:
             }
 
         plot_periods = periods
-        if periods and (months_per_bar < 12 or chart_type == "line"):
+        if periods and (months_per_bar < 12 or chart_type != "bar"):
             first_year = next(iter(periods)).year
             last_year = next(reversed(periods)).year
             plot_periods = {}
@@ -378,7 +458,7 @@ class _SvgRenderer:
         self.svg = self._create_svg(width, height)
         self._draw_header(width, height, login, periods, group_by)
         plot_width = width - self.PLOT_LEFT - 24
-        if chart_type == "line":
+        if chart_type != "bar":
             first_period = next(iter(periods), None)
             values = {
                 period: _series_counts(counts, series, has_other)
@@ -386,13 +466,17 @@ class _SvgRenderer:
                 if period in periods
                 or (first_period is not None and period < first_period)
             }
+        peak = max((sum(counts.values()) for counts in periods.values()), default=0)
+        if chart_type == "line":
             peak = max((count for row in values.values() for count in row), default=0)
-        else:
-            peak = max((sum(counts.values()) for counts in periods.values()), default=0)
         axis_max = max(4, ((peak + 3) // 4) * 4)
         self._draw_axis(plot_width, axis_max)
         if chart_type == "line":
             legend = self._draw_lines(
+                plot_periods, group_by, series, values, plot_width, axis_max
+            )
+        elif chart_type == "area":
+            legend = self._draw_area(
                 plot_periods, group_by, series, values, plot_width, axis_max
             )
         else:
