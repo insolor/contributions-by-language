@@ -1,6 +1,6 @@
 # Contributions by language
 
-A command-line tool that generates a stacked bar chart in SVG format for a GitHub profile README. Each bar shows the selected period's commit contributions for a calendar year, grouped by the primary language of each repository.
+A command-line tool that generates a stacked bar chart in SVG format for a GitHub profile README. Each bar shows commit contributions for a calendar year, quarter or month, grouped by the primary language of each repository.
 
 ![Yearly GitHub commits by repository language](contributions.svg)
 
@@ -39,6 +39,12 @@ includes years without activity through the current year. Use `--years N`
 to show the current UTC year and the preceding `N - 1` calendar years. The default
 is five years unless a period is set in the settings file.
 
+Use `--group-by quarter` or `--group-by month` to show more detail within
+each year. Bars in these modes touch, and the horizontal axis shows one label
+per year. The first and last years occupy a full calendar year, with empty
+space for periods outside the available data. Segment tooltips identify the quarter or month. The default is
+`--group-by year`.
+
 ## Settings file
 
 The command loads `contributions.toml` from the current directory if it exists.
@@ -47,6 +53,7 @@ The command loads `contributions.toml` from the current directory if it exists.
 login = "insolor"
 all_time = true
 theme = "dark"
+group_by = "year"
 max_colors = 6
 force_other_languages = ["SCSS", "Jupyter Notebook", "JavaScript"]
 output = "contributions-dark.svg"

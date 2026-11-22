@@ -7,13 +7,14 @@ from pydantic import Field, model_validator
 from pydantic_config import SettingsConfig, SettingsModel
 from pydantic_settings import CliPositionalArg, CliSettingsSource
 
+from .chart import GroupBy
 from .palette import DEFAULT_MAX_COLORS, MAX_PALETTE_COLORS
 
 DEFAULT_YEARS = 5
 
 
 class Settings(SettingsModel):
-    """Generate an SVG of yearly GitHub commits."""
+    """Generate an SVG chart of GitHub commits."""
 
     model_config = SettingsConfig(
         cli_kebab_case=True,
@@ -35,6 +36,9 @@ class Settings(SettingsModel):
         False, description="Fetch closed months again and update the cache."
     )
     theme: Literal["light", "dark"] = Field("light", description="Chart theme.")
+    group_by: GroupBy = Field(
+        "year", description="Bar interval: year, quarter or month."
+    )
     max_colors: int = Field(
         DEFAULT_MAX_COLORS,
         ge=2,

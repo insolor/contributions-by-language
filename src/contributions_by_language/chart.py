@@ -1,9 +1,21 @@
 from collections import Counter
 from collections.abc import Sequence
 from datetime import date
+from itertools import groupby
+from typing import Literal
 from xml.etree.ElementTree import Element, SubElement, tostring
 
 from .palette import DEFAULT_MAX_COLORS, PALETTES, Palette
+
+type GroupBy = Literal["year", "quarter", "month"]
+
+
+def _period_label(period: date, group_by: GroupBy) -> str:
+    if group_by == "quarter":
+        return f"{period.year} Q{(period.month - 1) // 3 + 1}"
+    if group_by == "month":
+        return f"{period:%Y-%m}"
+    return str(period.year)
 
 
 class _SvgRenderer:
@@ -76,17 +88,19 @@ class _SvgRenderer:
         width: int,
         height: int,
         login: str,
-        annual: dict[int, Counter[str]],
+        periods: dict[date, Counter[str]],
+        group_by: GroupBy,
     ) -> None:
-        title = f"Yearly GitHub commits by language · @{login}"
+        frequency = {"year": "Yearly", "quarter": "Quarterly", "month": "Monthly"}
+        title = f"{frequency[group_by]} GitHub commits by language · @{login}"
         SubElement(self.svg, "title", id="title").text = title
         SubElement(self.svg, "desc", id="description").text = ". ".join(
-            f"{year}: "
+            f"{_period_label(period, group_by)}: "
             + (
                 ", ".join(f"{name} {count}" for name, count in sorted(counts.items()))
                 or "0 commits"
             )
-            for year, counts in annual.items()
+            for period, counts in periods.items()
         )
 
         self._rectangle(
@@ -121,23 +135,27 @@ class _SvgRenderer:
 
     def _draw_bars(
         self,
-        annual: dict[int, Counter[str]],
+        periods: dict[date, Counter[str]],
+        group_by: GroupBy,
         series: Sequence[tuple[str, str]],
         has_other: bool,
         plot_width: int,
         axis_max: int,
     ) -> list[tuple[str, str, int]]:
-        step = plot_width / max(1, len(annual))
-        bar_width = min(32, step * 0.7)
+        step = plot_width / max(1, len(periods))
+        yearly = group_by == "year"
+        bar_width = min(32, step * 0.7) if yearly else step
         legend: dict[str, str] = {}
         legend_counts: Counter[str] = Counter()
-        for index, (year, counts) in enumerate(annual.items()):
+        for index, (period, counts) in enumerate(periods.items()):
             x = self.PLOT_LEFT + (index + 0.5) * step
             values = [counts[name] for name, _ in series]
             total = sum(counts.values())
             if has_other:
                 values[-1] = total - sum(values[:-1])
 
+            bar_left = x - bar_width / 2 if yearly else self.PLOT_LEFT + index * step
+            period_label = _period_label(period, group_by)
             y = self.PLOT_BASELINE
             for (name, color), count in zip(series, values, strict=True):
                 if count:
@@ -145,15 +163,36 @@ class _SvgRenderer:
                     legend_counts[name] += count
                     segment_height = count * self.PLOT_HEIGHT / axis_max
                     y -= segment_height
-                    bar = self._rectangle(
-                        x - bar_width / 2, y, bar_width, segment_height, color
-                    )
-                    SubElement(bar, "title").text = f"{year}, {name}: {count}"
-            if total:
+                    bar = self._rectangle(bar_left, y, bar_width, segment_height, color)
+                    SubElement(bar, "title").text = f"{period_label}, {name}: {count}"
+            if total and yearly:
                 self._label(x, y - 5, total, **{"text-anchor": "middle"})
-            self._label(x, self.PLOT_BASELINE + 20, year, **{"text-anchor": "middle"})
 
+        self._draw_year_markers(periods, step)
         return [(name, color, legend_counts[name]) for name, color in legend.items()]
+
+    def _draw_year_markers(
+        self, periods: dict[date, Counter[str]], step: float
+    ) -> None:
+        start = 0
+        for year, group in groupby(periods, key=lambda period: period.year):
+            size = sum(1 for _ in group)
+            boundary = self.PLOT_LEFT + start * step
+            if start:
+                self._rectangle(
+                    boundary - 0.5,
+                    self.PLOT_BASELINE - self.PLOT_HEIGHT,
+                    1,
+                    self.PLOT_HEIGHT,
+                    self.palette.grid,
+                )
+            self._label(
+                self.PLOT_LEFT + (start + size / 2) * step,
+                self.PLOT_BASELINE + 20,
+                year,
+                **{"text-anchor": "middle"},
+            )
+            start += size
 
     def _draw_legend(
         self,
@@ -180,15 +219,18 @@ class _SvgRenderer:
         max_colors: int = DEFAULT_MAX_COLORS,
         force_other_languages: Sequence[str] = (),
         show_legend_counts: bool = True,
+        group_by: GroupBy = "year",
     ) -> str:
         colors = self.palette.languages
 
-        annual: dict[int, Counter[str]] = {}
+        months_per_bar = {"year": 12, "quarter": 3, "month": 1}[group_by]
+        periods: dict[date, Counter[str]] = {}
         for month, counts in sorted(monthly.items()):
-            year_counts = annual.setdefault(month.year, Counter())
-            year_counts.update(counts)
+            start_month = (month.month - 1) // months_per_bar * months_per_bar + 1
+            period = date(month.year, start_month, 1)
+            periods.setdefault(period, Counter()).update(counts)
 
-        totals = sum(annual.values(), Counter())
+        totals = sum(periods.values(), Counter())
         has_no_primary = self.NO_PRIMARY_LANGUAGE in totals
         forced_names = {name.casefold() for name in force_other_languages}
         forced = {
@@ -212,18 +254,30 @@ class _SvgRenderer:
         if has_other:
             series.append(("Other languages", colors[-1]))
 
-        width = max(500, 80 + len(annual) * 39)
+        plot_periods = periods
+        if periods and months_per_bar < 12:
+            first_year = next(iter(periods)).year
+            last_year = next(reversed(periods)).year
+            plot_periods = {}
+            for year in range(first_year, last_year + 1):
+                for month in range(1, 13, months_per_bar):
+                    period = date(year, month, 1)
+                    plot_periods[period] = periods.get(period, Counter())
+
+        year_count = len({period.year for period in plot_periods})
+        width = max(500, 80 + year_count * 39)
         legend_columns = max(1, min(3, len(series)))
         legend_rows = (len(series) + legend_columns - 1) // legend_columns
         height = 290 + 24 * legend_rows
         self.svg = self._create_svg(width, height)
-        self._draw_header(width, height, login, annual)
-        peak = max((sum(counts.values()) for counts in annual.values()), default=0)
+        self._draw_header(width, height, login, periods, group_by)
+        peak = max((sum(counts.values()) for counts in periods.values()), default=0)
         axis_max = max(4, ((peak + 3) // 4) * 4)
         plot_width = width - self.PLOT_LEFT - 24
         self._draw_axis(plot_width, axis_max)
         legend = self._draw_bars(
-            annual,
+            plot_periods,
+            group_by,
             series,
             has_other,
             plot_width,
@@ -250,6 +304,7 @@ def render_svg(
     max_colors: int = DEFAULT_MAX_COLORS,
     force_other_languages: Sequence[str] = (),
     show_legend_counts: bool = True,
+    group_by: GroupBy = "year",
 ) -> str:
     return _SvgRenderer(PALETTES[theme]).render(
         monthly,
@@ -257,4 +312,5 @@ def render_svg(
         max_colors=max_colors,
         force_other_languages=force_other_languages,
         show_legend_counts=show_legend_counts,
+        group_by=group_by,
     )
