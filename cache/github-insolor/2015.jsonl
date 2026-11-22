@@ -1,12 +1,12 @@
-{"counts": {"Assembly": 22, "No primary language": 1, "Python": 14}, "month": "2015-01-01"}
-{"counts": {"Assembly": 3, "Euphoria": 14, "Python": 36}, "month": "2015-02-01"}
-{"counts": {}, "month": "2015-03-01"}
-{"counts": {"Euphoria": 2, "Python": 55}, "month": "2015-04-01"}
-{"counts": {"Assembly": 4, "C": 15, "C++": 1, "Python": 26}, "month": "2015-05-01"}
-{"counts": {"C": 1, "Python": 70}, "month": "2015-06-01"}
-{"counts": {"Python": 33}, "month": "2015-07-01"}
-{"counts": {"Euphoria": 3, "Python": 61}, "month": "2015-08-01"}
-{"counts": {"Python": 98}, "month": "2015-09-01"}
-{"counts": {"Assembly": 2, "C": 2, "Python": 101}, "month": "2015-10-01"}
-{"counts": {"Python": 15}, "month": "2015-11-01"}
-{"counts": {"No primary language": 5, "Python": 13}, "month": "2015-12-01"}
+{"counts": {"Assembly": 22, "No primary language": 1, "Python": 14}, "month": "2015-01-01", "private_counts": {}}
+{"counts": {"Assembly": 3, "Euphoria": 14, "Python": 36}, "month": "2015-02-01", "private_counts": {}}
+{"counts": {}, "month": "2015-03-01", "private_counts": {}}
+{"counts": {"Euphoria": 2, "Python": 55}, "month": "2015-04-01", "private_counts": {}}
+{"counts": {"Assembly": 4, "C": 15, "C++": 1, "Python": 26}, "month": "2015-05-01", "private_counts": {}}
+{"counts": {"C": 1, "Python": 70}, "month": "2015-06-01", "private_counts": {}}
+{"counts": {"Python": 33}, "month": "2015-07-01", "private_counts": {}}
+{"counts": {"Euphoria": 3, "Python": 61}, "month": "2015-08-01", "private_counts": {}}
+{"counts": {"Python": 98}, "month": "2015-09-01", "private_counts": {}}
+{"counts": {"Assembly": 2, "C": 2, "Python": 101}, "month": "2015-10-01", "private_counts": {}}
+{"counts": {"Python": 15}, "month": "2015-11-01", "private_counts": {}}
+{"counts": {"No primary language": 5, "Python": 13}, "month": "2015-12-01", "private_counts": {}}

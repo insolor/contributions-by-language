@@ -1,12 +1,12 @@
-{"counts": {"C++": 54, "No primary language": 3, "Python": 37}, "month": "2023-01-01"}
-{"counts": {"C++": 4, "HTML": 31, "No primary language": 9, "Python": 47, "SCSS": 1}, "month": "2023-02-01"}
-{"counts": {"C++": 1, "HTML": 7, "No primary language": 1, "Python": 6}, "month": "2023-03-01"}
-{"counts": {"C++": 5, "No primary language": 8, "Python": 14, "SCSS": 1}, "month": "2023-04-01"}
-{"counts": {"C++": 3, "Cython": 6, "No primary language": 18, "Python": 96, "Rust": 13}, "month": "2023-05-01"}
-{"counts": {"HTML": 1, "No primary language": 11, "Python": 20}, "month": "2023-06-01"}
-{"counts": {"C++": 1, "No primary language": 23, "Python": 44}, "month": "2023-07-01"}
-{"counts": {"C++": 6, "Cython": 2, "JavaScript": 2, "No primary language": 48, "Python": 119, "Rust": 2}, "month": "2023-08-01"}
-{"counts": {"C++": 2, "Cython": 28, "No primary language": 18, "Python": 69}, "month": "2023-09-01"}
-{"counts": {"C++": 6, "Cython": 4, "Jupyter Notebook": 2, "No primary language": 5, "Python": 58, "Rust": 1}, "month": "2023-10-01"}
-{"counts": {"C++": 6, "Cython": 7, "No primary language": 11, "Python": 101, "Rust": 9}, "month": "2023-11-01"}
-{"counts": {"C++": 1, "Cython": 3, "No primary language": 2, "Python": 42}, "month": "2023-12-01"}
+{"counts": {"C++": 54, "No primary language": 3, "Python": 37}, "month": "2023-01-01", "private_counts": {}}
+{"counts": {"C++": 4, "HTML": 31, "No primary language": 9, "Python": 47, "SCSS": 1}, "month": "2023-02-01", "private_counts": {}}
+{"counts": {"C++": 1, "HTML": 7, "No primary language": 1, "Python": 6}, "month": "2023-03-01", "private_counts": {}}
+{"counts": {"C++": 5, "No primary language": 8, "Python": 14, "SCSS": 1}, "month": "2023-04-01", "private_counts": {}}
+{"counts": {"C++": 3, "Cython": 6, "No primary language": 18, "Python": 96, "Rust": 13}, "month": "2023-05-01", "private_counts": {}}
+{"counts": {"HTML": 1, "No primary language": 11, "Python": 20}, "month": "2023-06-01", "private_counts": {}}
+{"counts": {"C++": 1, "No primary language": 23, "Python": 44}, "month": "2023-07-01", "private_counts": {}}
+{"counts": {"C++": 6, "Cython": 2, "JavaScript": 2, "No primary language": 48, "Python": 119, "Rust": 2}, "month": "2023-08-01", "private_counts": {"Python": 2}}
+{"counts": {"C++": 2, "Cython": 28, "No primary language": 18, "Python": 69}, "month": "2023-09-01", "private_counts": {}}
+{"counts": {"C++": 6, "Cython": 4, "Jupyter Notebook": 2, "No primary language": 5, "Python": 58, "Rust": 1}, "month": "2023-10-01", "private_counts": {}}
+{"counts": {"C++": 6, "Cython": 7, "No primary language": 11, "Python": 101, "Rust": 9}, "month": "2023-11-01", "private_counts": {}}
+{"counts": {"C++": 1, "Cython": 3, "No primary language": 2, "Python": 42}, "month": "2023-12-01", "private_counts": {}}

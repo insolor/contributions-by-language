@@ -133,16 +133,35 @@ months from the local cache and fetch the current month again. In `--all-time`
 mode, the list of contribution years is refreshed on each run.
 
 Each year is a JSONL file under `cache/github-<login>/YYYY.jsonl` in the current
-Git repository. Each line records a completed month and its language counts.
-Outside a Git
-repository, the cache goes in the current directory. You can commit these files
-and reuse them in another checkout. They contain only language names and commit
-counts from public repositories. Use `--refresh-cache` to fetch the requested
-months again, for example after a repository's primary language changes.
+Git repository. Each line stores a completed month and aggregate commit counts
+by language. The cache omits repository names for both public and private
+contributions. Outside a Git repository, the cache goes in the current
+directory. You can commit these files and reuse them in another checkout.
+Use `--refresh-cache` to fetch the requested months again, for example after a
+repository's primary language changes.
+
+## Include private repositories
+
+Pass `--include-private` or set `include_private = true` to include commit
+contributions from private repositories. Use a classic GitHub personal access
+token with both scopes enabled on the same token:
+
+- `repo` grants access to private repositories available to your account. [GitHub token scopes](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps)
+- `read:user` allows GitHub GraphQL to return private contributions. [GitHub GraphQL reference](https://docs.github.com/en/graphql/reference/users#contributionscollection)
+
+Public and private counts use the same yearly files under `cache/`. The
+`private_counts` field is only used with `--include-private`. Older entries
+without this field are fetched again when you enable the option. Use
+`--refresh-cache` if the token's access to private repositories changes.
+
+Both the cached `private_counts` and an SVG generated with this option contain
+aggregate counts for private repositories. Committing those files publishes
+those counts to anyone who can read the repository. The update workflow
+commits changes under `cache/` as well as the configured SVG.
 
 ## What the chart counts
 
-- GitHub [commit contributions](https://docs.github.com/en/graphql/reference/users#createdcommitcontribution) for public repositories. Issues, pull requests, reviews and contributions the API token cannot see are excluded.
+- GitHub [commit contributions](https://docs.github.com/en/graphql/reference/users#createdcommitcontribution) for public repositories by default. Issues, pull requests, reviews and contributions the API token cannot see are excluded.
 - Each commit is assigned to the repository's [primary language reported at fetch time](https://docs.github.com/en/graphql/reference/objects#repository). For multilingual repositories, all of their commits go into that one language.
 - Months are in UTC and include the current partial month. Set `max_colors` in the file or pass `--max-colors` to limit the palette to 2–12 colors (default: 6). The limit includes **No primary language** in gray and **Other languages** in blue-gray when those categories appear.
 - Both themes use language colors from a bundled [GitHub Linguist snapshot](https://github.com/github-linguist/linguist/blob/cfd7a0113aa1efab99faeff38756f0ed4d48add8/lib/linguist/languages.yml), with theme palette colors as a fallback.

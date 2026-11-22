@@ -1,12 +1,12 @@
-{"counts": {"C++": 2, "Cython": 8, "No primary language": 1, "Python": 6, "Rust": 3}, "month": "2024-01-01"}
-{"counts": {"C++": 1, "Cython": 4, "No primary language": 1, "Python": 10, "Rust": 11}, "month": "2024-02-01"}
-{"counts": {"C++": 3, "No primary language": 10, "Python": 65, "Rust": 34}, "month": "2024-03-01"}
-{"counts": {"No primary language": 8, "Python": 98, "Rust": 9, "SCSS": 19}, "month": "2024-04-01"}
-{"counts": {"C++": 5, "No primary language": 17, "Python": 87, "Rust": 39, "SCSS": 11}, "month": "2024-05-01"}
-{"counts": {"HTML": 1, "Python": 46, "Rust": 4, "SCSS": 7}, "month": "2024-06-01"}
-{"counts": {"No primary language": 3, "Python": 106, "Rust": 1, "SCSS": 28}, "month": "2024-07-01"}
-{"counts": {"No primary language": 2, "Python": 15, "Rust": 28, "SCSS": 8}, "month": "2024-08-01"}
-{"counts": {"No primary language": 3, "Python": 61, "Rust": 2}, "month": "2024-09-01"}
-{"counts": {"Cython": 3, "No primary language": 3, "Python": 33, "Rust": 3, "SCSS": 5}, "month": "2024-10-01"}
-{"counts": {"Cython": 1, "Python": 13, "Rust": 1, "SCSS": 1, "Zig": 55}, "month": "2024-11-01"}
-{"counts": {"No primary language": 5, "Python": 92, "Rust": 2, "SCSS": 2, "Zig": 83}, "month": "2024-12-01"}
+{"counts": {"C++": 2, "Cython": 8, "No primary language": 1, "Python": 6, "Rust": 3}, "month": "2024-01-01", "private_counts": {}}
+{"counts": {"C++": 1, "Cython": 4, "No primary language": 1, "Python": 10, "Rust": 11}, "month": "2024-02-01", "private_counts": {}}
+{"counts": {"C++": 3, "No primary language": 10, "Python": 65, "Rust": 34}, "month": "2024-03-01", "private_counts": {}}
+{"counts": {"No primary language": 8, "Python": 98, "Rust": 9, "SCSS": 19}, "month": "2024-04-01", "private_counts": {}}
+{"counts": {"C++": 5, "No primary language": 17, "Python": 87, "Rust": 39, "SCSS": 11}, "month": "2024-05-01", "private_counts": {}}
+{"counts": {"HTML": 1, "Python": 46, "Rust": 4, "SCSS": 7}, "month": "2024-06-01", "private_counts": {}}
+{"counts": {"No primary language": 3, "Python": 106, "Rust": 1, "SCSS": 28}, "month": "2024-07-01", "private_counts": {}}
+{"counts": {"No primary language": 2, "Python": 15, "Rust": 28, "SCSS": 8}, "month": "2024-08-01", "private_counts": {}}
+{"counts": {"No primary language": 3, "Python": 61, "Rust": 2}, "month": "2024-09-01", "private_counts": {}}
+{"counts": {"Cython": 3, "No primary language": 3, "Python": 33, "Rust": 3, "SCSS": 5}, "month": "2024-10-01", "private_counts": {}}
+{"counts": {"Cython": 1, "Python": 13, "Rust": 1, "SCSS": 1, "Zig": 55}, "month": "2024-11-01", "private_counts": {}}
+{"counts": {"No primary language": 5, "Python": 92, "Rust": 2, "SCSS": 2, "Zig": 83}, "month": "2024-12-01", "private_counts": {}}

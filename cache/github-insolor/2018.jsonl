@@ -1,12 +1,12 @@
-{"counts": {"No primary language": 3, "Python": 17}, "month": "2018-01-01"}
-{"counts": {}, "month": "2018-02-01"}
-{"counts": {"No primary language": 3, "Python": 1}, "month": "2018-03-01"}
-{"counts": {"No primary language": 1}, "month": "2018-04-01"}
-{"counts": {}, "month": "2018-05-01"}
-{"counts": {}, "month": "2018-06-01"}
-{"counts": {}, "month": "2018-07-01"}
-{"counts": {"Python": 19}, "month": "2018-08-01"}
-{"counts": {"Python": 50}, "month": "2018-09-01"}
-{"counts": {"Python": 3}, "month": "2018-10-01"}
-{"counts": {}, "month": "2018-11-01"}
-{"counts": {"Python": 8}, "month": "2018-12-01"}
+{"counts": {"No primary language": 3, "Python": 17}, "month": "2018-01-01", "private_counts": {}}
+{"counts": {}, "month": "2018-02-01", "private_counts": {}}
+{"counts": {"No primary language": 3, "Python": 1}, "month": "2018-03-01", "private_counts": {}}
+{"counts": {"No primary language": 1}, "month": "2018-04-01", "private_counts": {}}
+{"counts": {}, "month": "2018-05-01", "private_counts": {}}
+{"counts": {}, "month": "2018-06-01", "private_counts": {}}
+{"counts": {}, "month": "2018-07-01", "private_counts": {}}
+{"counts": {"Python": 19}, "month": "2018-08-01", "private_counts": {}}
+{"counts": {"Python": 50}, "month": "2018-09-01", "private_counts": {}}
+{"counts": {"Python": 3}, "month": "2018-10-01", "private_counts": {}}
+{"counts": {}, "month": "2018-11-01", "private_counts": {}}
+{"counts": {"Python": 8}, "month": "2018-12-01", "private_counts": {}}

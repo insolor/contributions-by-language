@@ -66,8 +66,13 @@ async def fetch_collection[Collection: BaseModel](
 
 
 async def fetch_month(
-    client: httpx.AsyncClient, login: str, month: date, now: datetime
-) -> Counter[str]:
+    client: httpx.AsyncClient,
+    login: str,
+    month: date,
+    now: datetime,
+    *,
+    include_private: bool = False,
+) -> tuple[Counter[str], Counter[str] | None]:
     start = datetime.combine(month, time.min, UTC)
     end = datetime.combine(shift_month(month, 1), time.min, UTC)
     variables: dict[str, str | int] = {
@@ -83,11 +88,18 @@ async def fetch_month(
             f"GitHub returned an incomplete repository list for {month:%Y-%m}"
         )
 
+    visibilities = {"PUBLIC", "PRIVATE"} if include_private else {"PUBLIC"}
     counts: Counter[str] = Counter()
+    private_counts: Counter[str] | None = Counter() if include_private else None
     for entry in collection.repositories:
         repository = entry.repository
-        if repository.visibility != "PUBLIC":
+        if repository.visibility not in visibilities:
             continue
+        repository_counts = (
+            private_counts
+            if repository.visibility == "PRIVATE" and private_counts is not None
+            else counts
+        )
         contributions = entry.contributions
         if contributions.page_info.has_next_page:
             raise RuntimeError(
@@ -98,8 +110,8 @@ async def fetch_month(
         for day in contributions.nodes:
             occurred = day.occurred_at
             if start <= occurred < end:
-                counts[name] += day.commit_count
-    return counts
+                repository_counts[name] += day.commit_count
+    return counts, private_counts
 
 
 async def fetch_years(client: httpx.AsyncClient, login: str) -> set[int]:

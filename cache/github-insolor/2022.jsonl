@@ -1,12 +1,12 @@
-{"counts": {"Jupyter Notebook": 1, "No primary language": 1, "Python": 6}, "month": "2022-01-01"}
-{"counts": {"Kotlin": 1, "Python": 6}, "month": "2022-02-01"}
-{"counts": {"JavaScript": 11}, "month": "2022-03-01"}
-{"counts": {"Python": 27}, "month": "2022-04-01"}
-{"counts": {"C": 2}, "month": "2022-05-01"}
-{"counts": {"Assembly": 3, "C": 32, "Euphoria": 14, "Makefile": 2, "No primary language": 65, "Python": 406, "Rust": 28}, "month": "2022-06-01"}
-{"counts": {"Python": 46}, "month": "2022-07-01"}
-{"counts": {"No primary language": 2, "Python": 43}, "month": "2022-08-01"}
-{"counts": {"Python": 16}, "month": "2022-09-01"}
-{"counts": {"No primary language": 1, "Python": 24}, "month": "2022-10-01"}
-{"counts": {"No primary language": 4, "Python": 96}, "month": "2022-11-01"}
-{"counts": {"C++": 9, "No primary language": 56, "Python": 106, "SCSS": 4}, "month": "2022-12-01"}
+{"counts": {"Jupyter Notebook": 1, "No primary language": 1, "Python": 6}, "month": "2022-01-01", "private_counts": {}}
+{"counts": {"Kotlin": 1, "Python": 6}, "month": "2022-02-01", "private_counts": {}}
+{"counts": {"JavaScript": 11}, "month": "2022-03-01", "private_counts": {}}
+{"counts": {"Python": 27}, "month": "2022-04-01", "private_counts": {}}
+{"counts": {"C": 2}, "month": "2022-05-01", "private_counts": {}}
+{"counts": {"Assembly": 3, "C": 32, "Euphoria": 14, "Makefile": 2, "No primary language": 65, "Python": 406, "Rust": 28}, "month": "2022-06-01", "private_counts": {}}
+{"counts": {"Python": 46}, "month": "2022-07-01", "private_counts": {}}
+{"counts": {"No primary language": 2, "Python": 43}, "month": "2022-08-01", "private_counts": {"Python": 29}}
+{"counts": {"Python": 16}, "month": "2022-09-01", "private_counts": {"Python": 24}}
+{"counts": {"No primary language": 1, "Python": 24}, "month": "2022-10-01", "private_counts": {}}
+{"counts": {"No primary language": 4, "Python": 96}, "month": "2022-11-01", "private_counts": {}}
+{"counts": {"C++": 9, "No primary language": 56, "Python": 106, "SCSS": 4}, "month": "2022-12-01", "private_counts": {}}

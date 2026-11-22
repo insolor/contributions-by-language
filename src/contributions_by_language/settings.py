@@ -37,6 +37,9 @@ class Settings(SettingsModel):
     )
     theme: Literal["light", "dark"] = Field("light", description="Chart theme.")
     chart_type: ChartType = Field("bar", description="Chart style: bar, line or area.")
+    include_private: bool = Field(
+        False, description="Include private repositories visible to the GitHub token."
+    )
     group_by: GroupBy = Field(
         "year", description="Bar interval: year, quarter or month."
     )

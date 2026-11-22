@@ -1,12 +1,12 @@
-{"counts": {"Python": 9}, "month": "2020-01-01"}
-{"counts": {}, "month": "2020-02-01"}
-{"counts": {"Python": 1}, "month": "2020-03-01"}
-{"counts": {"Python": 3}, "month": "2020-04-01"}
-{"counts": {"No primary language": 2, "Python": 37}, "month": "2020-05-01"}
-{"counts": {"Python": 1}, "month": "2020-06-01"}
-{"counts": {"No primary language": 9, "Python": 30}, "month": "2020-07-01"}
-{"counts": {"No primary language": 1, "Python": 10}, "month": "2020-08-01"}
-{"counts": {"CSS": 9, "Jupyter Notebook": 1, "Makefile": 4, "Python": 69}, "month": "2020-09-01"}
-{"counts": {"Jupyter Notebook": 31}, "month": "2020-10-01"}
-{"counts": {"Jupyter Notebook": 9, "Kotlin": 2, "Lua": 2, "Python": 5, "SCSS": 25}, "month": "2020-11-01"}
-{"counts": {"Assembly": 45, "C": 1, "Makefile": 11, "No primary language": 2, "Python": 7, "SCSS": 2}, "month": "2020-12-01"}
+{"counts": {"Python": 9}, "month": "2020-01-01", "private_counts": {}}
+{"counts": {}, "month": "2020-02-01", "private_counts": {}}
+{"counts": {"Python": 1}, "month": "2020-03-01", "private_counts": {}}
+{"counts": {"Python": 3}, "month": "2020-04-01", "private_counts": {}}
+{"counts": {"No primary language": 2, "Python": 37}, "month": "2020-05-01", "private_counts": {}}
+{"counts": {"Python": 1}, "month": "2020-06-01", "private_counts": {}}
+{"counts": {"No primary language": 9, "Python": 30}, "month": "2020-07-01", "private_counts": {}}
+{"counts": {"No primary language": 1, "Python": 10}, "month": "2020-08-01", "private_counts": {}}
+{"counts": {"CSS": 9, "Jupyter Notebook": 1, "Makefile": 4, "Python": 69}, "month": "2020-09-01", "private_counts": {}}
+{"counts": {"Jupyter Notebook": 31}, "month": "2020-10-01", "private_counts": {}}
+{"counts": {"Jupyter Notebook": 9, "Kotlin": 2, "Lua": 2, "Python": 5, "SCSS": 25}, "month": "2020-11-01", "private_counts": {"Kotlin": 32}}
+{"counts": {"Assembly": 45, "C": 1, "Makefile": 11, "No primary language": 2, "Python": 7, "SCSS": 2}, "month": "2020-12-01", "private_counts": {"Kotlin": 4}}

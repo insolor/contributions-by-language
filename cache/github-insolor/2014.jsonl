@@ -1,12 +1,12 @@
-{"counts": {"Euphoria": 1, "Python": 5}, "month": "2014-01-01"}
-{"counts": {}, "month": "2014-02-01"}
-{"counts": {"Euphoria": 5}, "month": "2014-03-01"}
-{"counts": {"Euphoria": 1}, "month": "2014-04-01"}
-{"counts": {"Assembly": 10, "Euphoria": 3, "HTML": 5, "Python": 20}, "month": "2014-05-01"}
-{"counts": {"C": 2, "Euphoria": 8, "HTML": 2, "Python": 25}, "month": "2014-06-01"}
-{"counts": {"C": 4, "Euphoria": 4, "No primary language": 4, "Python": 44}, "month": "2014-07-01"}
-{"counts": {"Euphoria": 11, "No primary language": 5, "Python": 10}, "month": "2014-08-01"}
-{"counts": {"Euphoria": 4, "No primary language": 4, "Python": 4}, "month": "2014-09-01"}
-{"counts": {"Jupyter Notebook": 27, "Python": 18}, "month": "2014-10-01"}
-{"counts": {"No primary language": 5, "Python": 14}, "month": "2014-11-01"}
-{"counts": {"No primary language": 4, "Python": 4}, "month": "2014-12-01"}
+{"counts": {"Euphoria": 1, "Python": 5}, "month": "2014-01-01", "private_counts": {}}
+{"counts": {}, "month": "2014-02-01", "private_counts": {}}
+{"counts": {"Euphoria": 5}, "month": "2014-03-01", "private_counts": {}}
+{"counts": {"Euphoria": 1}, "month": "2014-04-01", "private_counts": {}}
+{"counts": {"Assembly": 10, "Euphoria": 3, "HTML": 5, "Python": 20}, "month": "2014-05-01", "private_counts": {}}
+{"counts": {"C": 2, "Euphoria": 8, "HTML": 2, "Python": 25}, "month": "2014-06-01", "private_counts": {}}
+{"counts": {"C": 4, "Euphoria": 4, "No primary language": 4, "Python": 44}, "month": "2014-07-01", "private_counts": {}}
+{"counts": {"Euphoria": 11, "No primary language": 5, "Python": 10}, "month": "2014-08-01", "private_counts": {}}
+{"counts": {"Euphoria": 4, "No primary language": 4, "Python": 4}, "month": "2014-09-01", "private_counts": {}}
+{"counts": {"Jupyter Notebook": 27, "Python": 18}, "month": "2014-10-01", "private_counts": {}}
+{"counts": {"No primary language": 5, "Python": 14}, "month": "2014-11-01", "private_counts": {}}
+{"counts": {"No primary language": 4, "Python": 4}, "month": "2014-12-01", "private_counts": {}}

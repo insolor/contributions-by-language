@@ -1,10 +1,10 @@
-{"counts": {"No primary language": 4, "Python": 10, "Rust": 2, "SCSS": 14}, "month": "2026-01-01"}
-{"counts": {"Jupyter Notebook": 1, "Python": 7, "SCSS": 3}, "month": "2026-02-01"}
-{"counts": {"Python": 6}, "month": "2026-03-01"}
-{"counts": {"No primary language": 1, "Python": 16, "Zig": 35}, "month": "2026-04-01"}
-{"counts": {"Python": 5, "Rust": 2, "Zig": 4}, "month": "2026-05-01"}
-{"counts": {"Cython": 1, "No primary language": 1, "Python": 26, "Zig": 10}, "month": "2026-06-01"}
-{"counts": {"JavaScript": 2, "Python": 40, "SCSS": 1, "Zig": 2}, "month": "2026-07-01"}
-{"counts": {"JavaScript": 16, "No primary language": 1, "Python": 15, "Rust": 1}, "month": "2026-08-01"}
-{"counts": {}, "month": "2026-09-01"}
-{"counts": {"Python": 35, "Rust": 2, "Zig": 7}, "month": "2026-10-01"}
+{"counts": {"No primary language": 4, "Python": 10, "Rust": 2, "SCSS": 14}, "month": "2026-01-01", "private_counts": {}}
+{"counts": {"Jupyter Notebook": 1, "Python": 7, "SCSS": 3}, "month": "2026-02-01", "private_counts": {}}
+{"counts": {"Python": 6}, "month": "2026-03-01", "private_counts": {}}
+{"counts": {"No primary language": 1, "Python": 16, "Zig": 35}, "month": "2026-04-01", "private_counts": {}}
+{"counts": {"Python": 5, "Rust": 2, "Zig": 4}, "month": "2026-05-01", "private_counts": {}}
+{"counts": {"Cython": 1, "No primary language": 1, "Python": 26, "Zig": 10}, "month": "2026-06-01", "private_counts": {}}
+{"counts": {"JavaScript": 2, "Python": 40, "SCSS": 1, "Zig": 2}, "month": "2026-07-01", "private_counts": {}}
+{"counts": {"JavaScript": 16, "No primary language": 1, "Python": 15, "Rust": 1}, "month": "2026-08-01", "private_counts": {}}
+{"counts": {}, "month": "2026-09-01", "private_counts": {}}
+{"counts": {"Python": 35, "Rust": 2, "Zig": 7}, "month": "2026-10-01", "private_counts": {}}

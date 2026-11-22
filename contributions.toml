@@ -8,3 +8,4 @@ show_legend_counts = true
 group_by = "year"
 chart_type = "area"
 # show_other_languages = false
+include_private = true

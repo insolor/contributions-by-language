@@ -12,6 +12,7 @@ from pydantic import BaseModel, NonNegativeInt, ValidationError
 class MonthRecord(BaseModel):
     month: date
     counts: dict[str, NonNegativeInt]
+    private_counts: dict[str, NonNegativeInt] | None = None
 
 
 class MonthCache:
@@ -21,11 +22,19 @@ class MonthCache:
             (path for path in (cwd, *cwd.parents) if (path / ".git").exists()),
             cwd,
         )
-        self.directory = root / "cache" / f"github-{quote(login.casefold(), safe='')}"
+        account = f"github-{quote(login.casefold(), safe='')}"
+        self.directory = root / "cache" / account
 
-    def get(self, month: date) -> Counter[str] | None:
+    def get(self, month: date, *, include_private: bool = False) -> Counter[str] | None:
         record = self._read_year(month.year).get(month)
-        return Counter(record.counts) if record is not None else None
+        if record is None:
+            return None
+        counts = Counter(record.counts)
+        if include_private:
+            if record.private_counts is None:
+                return None
+            counts.update(record.private_counts)
+        return counts
 
     def _read_year(self, year: int) -> dict[date, MonthRecord]:
         path = self.directory / f"{year:04}.jsonl"
@@ -43,15 +52,29 @@ class MonthCache:
                 records[record.month] = record
         return records
 
-    def put(self, month: date, counts: Counter[str]) -> None:
+    def put(
+        self,
+        month: date,
+        counts: Counter[str],
+        *,
+        private_counts: Counter[str] | None = None,
+    ) -> None:
         self.directory.mkdir(parents=True, exist_ok=True)
         path = self.directory / f"{month.year:04}.jsonl"
         with FileLock(path.with_suffix(".lock"), timeout=30):
             records = self._read_year(month.year)
-            records[month] = MonthRecord(month=month, counts=dict(counts))
+            previous = records.get(month)
+            stored_private_counts = (
+                dict(private_counts) if private_counts is not None else None
+            )
+            if private_counts is None and previous is not None:
+                stored_private_counts = previous.private_counts
+            records[month] = MonthRecord(
+                month=month, counts=dict(counts), private_counts=stored_private_counts
+            )
             data = "".join(
                 json.dumps(
-                    records[key].model_dump(mode="json"),
+                    records[key].model_dump(mode="json", exclude_none=True),
                     ensure_ascii=False,
                     sort_keys=True,
                 )

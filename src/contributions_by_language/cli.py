@@ -49,7 +49,12 @@ async def _generate_chart(settings: Settings, login: str, token: str) -> None:
     ) as client:
         if settings.all_time:
             monthly = await fetch_history(
-                client, login, now, cache, refresh=settings.refresh_cache
+                client,
+                login,
+                now,
+                cache,
+                refresh=settings.refresh_cache,
+                include_private=settings.include_private,
             )
         else:
             first_year = max(1, now.year - (settings.years or DEFAULT_YEARS) + 1)
@@ -59,7 +64,13 @@ async def _generate_chart(settings: Settings, login: str, token: str) -> None:
                 for month in range(1, (now.month if year == now.year else 12) + 1)
             ]
             monthly = await fetch_months(
-                client, login, period, now, cache, refresh=settings.refresh_cache
+                client,
+                login,
+                period,
+                now,
+                cache,
+                refresh=settings.refresh_cache,
+                include_private=settings.include_private,
             )
     svg = render_svg(
         monthly,
