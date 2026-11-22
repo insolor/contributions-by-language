@@ -285,6 +285,7 @@ class _SvgRenderer:
         periods: dict[date, Counter[str]],
         group_by: GroupBy,
         series: Sequence[tuple[str, str]],
+        stack_order: Sequence[int],
         values_by_period: dict[date, list[int]],
         plot_width: int,
         axis_max: int,
@@ -301,9 +302,6 @@ class _SvgRenderer:
         xs = [self.PLOT_LEFT + (index + 0.5) * step for index in range(len(rows))]
         scale = self.PLOT_HEIGHT / axis_max
         cumulative = [0] * len(rows)
-        stack_order = dict.fromkeys(
-            index for row in rows for index, count in enumerate(row) if count
-        )
         legend = []
         for index in stack_order:
             name, color = series[index]
@@ -406,7 +404,8 @@ class _SvgRenderer:
 
         months_per_bar = {"year": 12, "quarter": 3, "month": 1}[group_by]
         periods: dict[date, Counter[str]] = {}
-        for month, counts in sorted(monthly.items()):
+        monthly_items = sorted(monthly.items())
+        for month, counts in monthly_items:
             start_month = (month.month - 1) // months_per_bar * months_per_bar + 1
             period = date(month.year, start_month, 1)
             periods.setdefault(period, Counter()).update(counts)
@@ -484,8 +483,24 @@ class _SvgRenderer:
                 plot_periods, group_by, series, values, plot_width, axis_max
             )
         elif chart_type == "area":
+            stack_order = list(
+                dict.fromkeys(
+                    index
+                    for _, counts in monthly_items
+                    for index, count in enumerate(
+                        _series_counts(counts, series, has_other)
+                    )
+                    if count
+                )
+            )
             legend = self._draw_area(
-                plot_periods, group_by, series, values, plot_width, axis_max
+                plot_periods,
+                group_by,
+                series,
+                stack_order,
+                values,
+                plot_width,
+                axis_max,
             )
         else:
             legend = self._draw_bars(
