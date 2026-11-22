@@ -9,4 +9,4 @@
 {"counts": {"Python": 16}, "month": "2022-09-01", "private_counts": {"Python": 24}}
 {"counts": {"No primary language": 1, "Python": 24}, "month": "2022-10-01", "private_counts": {}}
 {"counts": {"No primary language": 4, "Python": 96}, "month": "2022-11-01", "private_counts": {}}
-{"counts": {"C++": 9, "No primary language": 56, "Python": 106, "SCSS": 4}, "month": "2022-12-01", "private_counts": {}}
+{"counts": {"C++": 9, "HTML": 4, "No primary language": 56, "Python": 106}, "month": "2022-12-01", "private_counts": {}}

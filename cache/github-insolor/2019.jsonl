@@ -7,6 +7,6 @@
 {"counts": {"No primary language": 3, "Python": 5}, "month": "2019-07-01", "private_counts": {}}
 {"counts": {"No primary language": 1, "Python": 49}, "month": "2019-08-01", "private_counts": {}}
 {"counts": {}, "month": "2019-09-01", "private_counts": {}}
-{"counts": {"No primary language": 4, "Python": 39, "SCSS": 9}, "month": "2019-10-01", "private_counts": {}}
+{"counts": {"HTML": 9, "No primary language": 4, "Python": 39}, "month": "2019-10-01", "private_counts": {}}
 {"counts": {"Java": 1, "Python": 7}, "month": "2019-11-01", "private_counts": {}}
-{"counts": {"Python": 8, "SCSS": 1}, "month": "2019-12-01", "private_counts": {}}
+{"counts": {"HTML": 1, "Python": 8}, "month": "2019-12-01", "private_counts": {}}

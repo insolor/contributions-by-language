@@ -2,11 +2,11 @@
 {"counts": {}, "month": "2021-02-01", "private_counts": {}}
 {"counts": {}, "month": "2021-03-01", "private_counts": {}}
 {"counts": {"HTML": 5, "Jupyter Notebook": 1, "Python": 7}, "month": "2021-04-01", "private_counts": {}}
-{"counts": {"Assembly": 5, "JavaScript": 10, "Jupyter Notebook": 5, "No primary language": 13, "Python": 69, "SCSS": 5}, "month": "2021-05-01", "private_counts": {"Python": 5}}
+{"counts": {"Assembly": 5, "HTML": 5, "JavaScript": 10, "Jupyter Notebook": 5, "No primary language": 13, "Python": 69}, "month": "2021-05-01", "private_counts": {"Python": 5}}
 {"counts": {"Euphoria": 4, "Makefile": 5, "No primary language": 1, "Python": 5}, "month": "2021-06-01", "private_counts": {}}
 {"counts": {"Python": 16}, "month": "2021-07-01", "private_counts": {}}
 {"counts": {"Assembly": 3, "Euphoria": 1, "Kotlin": 1, "No primary language": 10, "Python": 47}, "month": "2021-08-01", "private_counts": {}}
 {"counts": {"No primary language": 4, "Python": 2}, "month": "2021-09-01", "private_counts": {}}
-{"counts": {"Kotlin": 1, "Makefile": 14, "No primary language": 2, "Python": 144, "SCSS": 13}, "month": "2021-10-01", "private_counts": {}}
-{"counts": {"No primary language": 5, "Python": 291, "SCSS": 1}, "month": "2021-11-01", "private_counts": {}}
+{"counts": {"HTML": 13, "Kotlin": 1, "Makefile": 14, "No primary language": 2, "Python": 144}, "month": "2021-10-01", "private_counts": {}}
+{"counts": {"HTML": 1, "No primary language": 5, "Python": 291}, "month": "2021-11-01", "private_counts": {}}
 {"counts": {"Jupyter Notebook": 10, "Python": 25}, "month": "2021-12-01", "private_counts": {}}
