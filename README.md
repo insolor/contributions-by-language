@@ -2,6 +2,8 @@
 
 A command-line tool that generates a stacked bar chart in SVG format for a GitHub profile README. Each bar shows the selected period's commit contributions for a calendar year, grouped by the primary language of each repository.
 
+![Yearly GitHub commits by repository language](contributions.svg)
+
 ## Generate the chart
 
 Run with Python 3.14 and uv. Supply a GitHub token in `GITHUB_TOKEN` or `GH_TOKEN`. If you already use an authenticated GitHub CLI, you can pass its token for this command only.
