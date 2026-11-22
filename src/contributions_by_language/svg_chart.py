@@ -1,31 +1,35 @@
-from collections import Counter
 from collections.abc import Sequence
+from dataclasses import dataclass
 from datetime import date
 from itertools import groupby, pairwise
 from typing import Literal
 from xml.etree.ElementTree import Element, SubElement, tostring
 
-from .palette import DEFAULT_MAX_COLORS, PALETTES, Palette, linguist_colors
+from .palette import Palette
 
 type GroupBy = Literal["year", "quarter", "month"]
 type ChartType = Literal["bar", "line", "area"]
 
 
-def _period_label(period: date, group_by: GroupBy) -> str:
+@dataclass(frozen=True)
+class ChartData:
+    title: str
+    description: str
+    periods: list[date]
+    series: list[tuple[str, str]]
+    values: dict[date, list[int]]
+    stack_order: list[int]
+    legend_entries: list[tuple[str, str, int]]
+    peak: int
+    axis_max: int
+
+
+def period_label(period: date, group_by: GroupBy) -> str:
     if group_by == "quarter":
         return f"{period.year} Q{(period.month - 1) // 3 + 1}"
     if group_by == "month":
         return f"{period:%Y-%m}"
     return str(period.year)
-
-
-def _series_counts(
-    counts: Counter[str], series: Sequence[tuple[str, str]], has_other: bool
-) -> list[int]:
-    values = [counts[name] for name, _ in series]
-    if has_other:
-        values[-1] = sum(counts.values()) - sum(values[:-1])
-    return values
 
 
 def _smooth_curve(points: Sequence[tuple[float, float]]) -> list[str]:
@@ -38,9 +42,7 @@ def _smooth_curve(points: Sequence[tuple[float, float]]) -> list[str]:
     return commands
 
 
-class _SvgRenderer:
-    NO_PRIMARY_LANGUAGE = "No primary language"
-    OTHER_LANGUAGES = "Other languages"
+class SvgChartRenderer:
     PLOT_LEFT = 56
     PLOT_BASELINE = 224
     PLOT_HEIGHT = 156
@@ -110,21 +112,11 @@ class _SvgRenderer:
         self,
         width: int,
         height: int,
-        login: str,
-        periods: dict[date, Counter[str]],
-        group_by: GroupBy,
+        title: str,
+        description: str,
     ) -> None:
-        frequency = {"year": "Yearly", "quarter": "Quarterly", "month": "Monthly"}
-        title = f"{frequency[group_by]} GitHub commits by language · @{login}"
         SubElement(self.svg, "title", id="title").text = title
-        SubElement(self.svg, "desc", id="description").text = ". ".join(
-            f"{_period_label(period, group_by)}: "
-            + (
-                ", ".join(f"{name} {count}" for name, count in sorted(counts.items()))
-                or "0 commits"
-            )
-            for period, counts in periods.items()
-        )
+        SubElement(self.svg, "desc", id="description").text = description
 
         self._rectangle(
             0.5,
@@ -158,52 +150,46 @@ class _SvgRenderer:
 
     def _draw_bars(
         self,
-        periods: dict[date, Counter[str]],
-        group_by: GroupBy,
-        series: Sequence[tuple[str, str]],
-        has_other: bool,
-        plot_width: int,
-        axis_max: int,
-    ) -> list[tuple[str, str, int]]:
-        step = plot_width / max(1, len(periods))
-        yearly = group_by == "year"
-        bar_width = min(32, step * 0.7) if yearly else step
-        legend: dict[str, str] = {}
-        legend_counts: Counter[str] = Counter()
-        for index, (period, counts) in enumerate(periods.items()):
-            x = self.PLOT_LEFT + (index + 0.5) * step
-            values = _series_counts(counts, series, has_other)
-            total = sum(counts.values())
-
-            bar_left = x - bar_width / 2 if yearly else self.PLOT_LEFT + index * step
-            period_label = _period_label(period, group_by)
-            y: float = self.PLOT_BASELINE
-            for (name, color), count in zip(series, values, strict=True):
-                if count:
-                    legend.setdefault(name, color)
-                    legend_counts[name] += count
-                    segment_height = count * self.PLOT_HEIGHT / axis_max
-                    y -= segment_height
-                    bar = self._rectangle(bar_left, y, bar_width, segment_height, color)
-                    SubElement(bar, "title").text = f"{period_label}, {name}: {count}"
-            if total and yearly:
-                self._label(x, y - 5, total, **{"text-anchor": "middle"})
-
-        self._draw_year_markers(periods, step)
-        return [(name, color, legend_counts[name]) for name, color in legend.items()]
-
-    def _draw_lines(
-        self,
-        periods: dict[date, Counter[str]],
+        periods: Sequence[date],
         group_by: GroupBy,
         series: Sequence[tuple[str, str]],
         values_by_period: dict[date, list[int]],
         plot_width: int,
         axis_max: int,
-    ) -> list[tuple[str, str, int]]:
+    ) -> None:
+        step = plot_width / max(1, len(periods))
+        yearly = group_by == "year"
+        bar_width = min(32, step * 0.7) if yearly else step
+        for index, period in enumerate(periods):
+            x = self.PLOT_LEFT + (index + 0.5) * step
+            values = values_by_period[period]
+            total = sum(values)
+
+            bar_left = x - bar_width / 2 if yearly else self.PLOT_LEFT + index * step
+            label = period_label(period, group_by)
+            y: float = self.PLOT_BASELINE
+            for (name, color), count in zip(series, values, strict=True):
+                if count:
+                    segment_height = count * self.PLOT_HEIGHT / axis_max
+                    y -= segment_height
+                    bar = self._rectangle(bar_left, y, bar_width, segment_height, color)
+                    SubElement(bar, "title").text = f"{label}, {name}: {count}"
+            if total and yearly:
+                self._label(x, y - 5, total, **{"text-anchor": "middle"})
+
+        self._draw_year_markers(periods, step)
+
+    def _draw_lines(
+        self,
+        periods: Sequence[date],
+        group_by: GroupBy,
+        series: Sequence[tuple[str, str]],
+        values_by_period: dict[date, list[int]],
+        plot_width: int,
+        axis_max: int,
+    ) -> None:
         step = plot_width / max(1, len(periods))
         self._draw_year_markers(periods, step)
-        legend = []
         for index, (name, color) in enumerate(series):
             counts = [
                 values[index]
@@ -211,7 +197,7 @@ class _SvgRenderer:
                 else None
                 for period in periods
             ]
-            if not (total := sum(count or 0 for count in counts)):
+            if not any(counts):
                 continue
             visible_counts = [
                 count if count or (count == 0 and (previous or following)) else None
@@ -230,8 +216,6 @@ class _SvgRenderer:
                     zip(periods, visible_counts, strict=True)
                 )
             ]
-            first = next(position for position, count in enumerate(counts) if count)
-            legend.append((first, index, name, color, total))
             segments = []
             segment: list[tuple[float, float, date, int | None]] = []
             for point in points:
@@ -247,11 +231,7 @@ class _SvgRenderer:
             for segment in segments:
                 curve = [(x, y) for x, y, _, _ in segment]
                 _, _, first_period, first_count = segment[0]
-                if (
-                    group_by == "year"
-                    and first_period == next(iter(periods))
-                    and first_count
-                ):
+                if group_by == "year" and first_period == periods[0] and first_count:
                     curve.insert(0, (self.PLOT_LEFT, self.PLOT_BASELINE))
                 x, y = curve[0]
                 if len(curve) == 1:
@@ -274,41 +254,24 @@ class _SvgRenderer:
                     },
                 )
                 SubElement(path, "title").text = "\n".join(
-                    f"{_period_label(period, group_by)}, {name}: {count}"
+                    f"{period_label(period, group_by)}, {name}: {count}"
                     for _, _, period, count in segment
                 )
 
-        return [(name, color, total) for _, _, name, color, total in sorted(legend)]
-
-    @staticmethod
-    def _get_stack_order(
-        monthly_items: Sequence[tuple[date, Counter[str]]],
-        series: Sequence[tuple[str, str]],
-        has_other: bool,
-    ) -> list[int]:
-        return list(
-            dict.fromkeys(
-                index
-                for _, counts in monthly_items
-                for index, count in enumerate(_series_counts(counts, series, has_other))
-                if count
-            )
-        )
-
     def _draw_area(
         self,
-        periods: dict[date, Counter[str]],
+        periods: Sequence[date],
         group_by: GroupBy,
         series: Sequence[tuple[str, str]],
         stack_order: Sequence[int],
         values_by_period: dict[date, list[int]],
         plot_width: int,
         axis_max: int,
-    ) -> list[tuple[str, str, int]]:
+    ) -> None:
         step = plot_width / max(1, len(periods))
         self._draw_year_markers(periods, step)
         if not values_by_period:
-            return []
+            return
 
         last_period = next(reversed(values_by_period))
         visible_periods = [period for period in periods if period <= last_period]
@@ -317,11 +280,9 @@ class _SvgRenderer:
         xs = [self.PLOT_LEFT + (index + 0.5) * step for index in range(len(rows))]
         scale = self.PLOT_HEIGHT / axis_max
         cumulative = [0] * len(rows)
-        legend = []
         for index in stack_order:
             name, color = series[index]
             counts = [row[index] for row in rows]
-            total = sum(counts)
             lower = [
                 (x, self.PLOT_BASELINE - count * scale)
                 for x, count in zip(xs, cumulative, strict=True)
@@ -354,16 +315,12 @@ class _SvgRenderer:
             ]
             path = SubElement(self.svg, "path", d=" ".join(commands), fill=color)
             SubElement(path, "title").text = "\n".join(
-                f"{_period_label(period, group_by)}, {name}: {count}"
+                f"{period_label(period, group_by)}, {name}: {count}"
                 for period, count in zip(visible_periods, counts, strict=True)
                 if count
             )
-            legend.append((name, color, total))
-        return legend
 
-    def _draw_year_markers(
-        self, periods: dict[date, Counter[str]], step: float
-    ) -> None:
+    def _draw_year_markers(self, periods: Sequence[date], step: float) -> None:
         start = 0
         for year, group in groupby(periods, key=lambda period: period.year):
             size = sum(1 for _ in group)
@@ -393,9 +350,7 @@ class _SvgRenderer:
     ) -> None:
         legend_top = 275
         column_width = (width - 50) / columns
-        special_order = {self.OTHER_LANGUAGES: 1, self.NO_PRIMARY_LANGUAGE: 2}
-        ordered = sorted(legend, key=lambda entry: special_order.get(entry[0], 0))
-        for index, (name, color, count) in enumerate(ordered):
+        for index, (name, color, count) in enumerate(legend):
             row, column = divmod(index, columns)
             x = 25 + column * column_width
             y = legend_top + 24 * row
@@ -405,145 +360,57 @@ class _SvgRenderer:
 
     def render(
         self,
-        monthly: dict[date, Counter[str]],
-        login: str,
+        data: ChartData,
         *,
-        max_colors: int = DEFAULT_MAX_COLORS,
-        force_other_languages: Sequence[str] = (),
-        show_legend_counts: bool = True,
-        show_other_languages: bool = True,
-        group_by: GroupBy = "year",
-        chart_type: ChartType = "bar",
+        show_legend_counts: bool,
+        group_by: GroupBy,
+        chart_type: ChartType,
     ) -> str:
-        colors = self.palette.languages
-
-        months_per_bar = {"year": 12, "quarter": 3, "month": 1}[group_by]
-        periods: dict[date, Counter[str]] = {}
-        monthly_items = sorted(monthly.items())
-        for month, counts in monthly_items:
-            start_month = (month.month - 1) // months_per_bar * months_per_bar + 1
-            period = date(month.year, start_month, 1)
-            periods.setdefault(period, Counter()).update(counts)
-
-        totals = sum(periods.values(), Counter())
-        has_no_primary = self.NO_PRIMARY_LANGUAGE in totals
-        forced_names = {name.casefold() for name in force_other_languages}
-        forced = {
-            name
-            for name in totals
-            if name != self.NO_PRIMARY_LANGUAGE and name.casefold() in forced_names
-        }
-        has_other = show_other_languages and (bool(forced) or len(totals) > max_colors)
-        language_slots = max_colors - has_no_primary - has_other
-        languages = sorted(
-            (
-                name
-                for name in totals
-                if name != self.NO_PRIMARY_LANGUAGE and name not in forced
-            ),
-            key=lambda name: (-totals[name], name),
-        )[:language_slots]
-        named_colors = linguist_colors() if self.palette.use_linguist else {}
-        series = [
-            (name, named_colors.get(name.casefold(), fallback))
-            for name, fallback in zip(languages, colors, strict=False)
-        ]
-        if has_no_primary:
-            series.append((self.NO_PRIMARY_LANGUAGE, self.palette.no_language))
-        if has_other:
-            series.append((self.OTHER_LANGUAGES, self.palette.other_languages))
-        if not show_other_languages:
-            displayed = {name for name, _ in series}
-            periods = {
-                period: Counter(
-                    {name: count for name, count in counts.items() if name in displayed}
-                )
-                for period, counts in periods.items()
-            }
-
-        plot_periods = periods
-        if periods and (months_per_bar < 12 or chart_type != "bar"):
-            first_year = next(iter(periods)).year
-            last_year = next(reversed(periods)).year
-            plot_periods = {}
-            for year in range(first_year, last_year + 1):
-                for month_number in range(1, 13, months_per_bar):
-                    period = date(year, month_number, 1)
-                    plot_periods[period] = periods.get(period, Counter())
-
-        year_count = len({period.year for period in plot_periods})
+        year_count = len({period.year for period in data.periods})
         width = max(500, 80 + year_count * 39)
-        legend_columns = max(1, min(3, len(series)))
-        legend_rows = (len(series) + legend_columns - 1) // legend_columns
+        legend_columns = max(1, min(3, len(data.series)))
+        legend_rows = (len(data.series) + legend_columns - 1) // legend_columns
         height = 290 + 24 * legend_rows
         self.svg = self._create_svg(width, height)
-        self._draw_header(width, height, login, periods, group_by)
+        self._draw_header(width, height, data.title, data.description)
         plot_width = width - self.PLOT_LEFT - 24
-        values: dict[date, list[int]] = {}
-        if chart_type != "bar":
-            first_period = next(iter(periods), None)
-            values = {
-                period: _series_counts(counts, series, has_other)
-                for period, counts in plot_periods.items()
-                if period in periods
-                or (first_period is not None and period < first_period)
-            }
-        peak = max((sum(counts.values()) for counts in periods.values()), default=0)
+        self._draw_axis(plot_width, data.axis_max)
         if chart_type == "line":
-            peak = max((count for row in values.values() for count in row), default=0)
-        axis_max = max(4, ((peak + 3) // 4) * 4)
-        self._draw_axis(plot_width, axis_max)
-        if chart_type == "line":
-            legend_entries = self._draw_lines(
-                plot_periods, group_by, series, values, plot_width, axis_max
+            self._draw_lines(
+                data.periods,
+                group_by,
+                data.series,
+                data.values,
+                plot_width,
+                data.axis_max,
             )
         elif chart_type == "area":
-            stack_order = self._get_stack_order(monthly_items, series, has_other)
-            legend_entries = self._draw_area(
-                plot_periods,
+            self._draw_area(
+                data.periods,
                 group_by,
-                series,
-                stack_order,
-                values,
+                data.series,
+                data.stack_order,
+                data.values,
                 plot_width,
-                axis_max,
+                data.axis_max,
             )
         else:
-            legend_entries = self._draw_bars(
-                plot_periods, group_by, series, has_other, plot_width, axis_max
+            self._draw_bars(
+                data.periods,
+                group_by,
+                data.series,
+                data.values,
+                plot_width,
+                data.axis_max,
             )
-
-        if not peak:
+        if not data.peak:
             self._label(
                 width / 2,
                 145,
                 "No public commit contributions in this period",
                 **{"text-anchor": "middle"},
             )
-
-        self._draw_legend(legend_entries, width, legend_columns, show_legend_counts)
+        self._draw_legend(
+            data.legend_entries, width, legend_columns, show_legend_counts
+        )
         return tostring(self.svg, encoding="unicode") + "\n"
-
-
-def render_svg(
-    monthly: dict[date, Counter[str]],
-    login: str,
-    *,
-    theme: str = "light",
-    max_colors: int = DEFAULT_MAX_COLORS,
-    force_other_languages: Sequence[str] = (),
-    show_legend_counts: bool = True,
-    show_other_languages: bool = True,
-    group_by: GroupBy = "year",
-    chart_type: ChartType = "bar",
-) -> str:
-    return _SvgRenderer(PALETTES[theme]).render(
-        monthly,
-        login,
-        max_colors=max_colors,
-        force_other_languages=force_other_languages,
-        show_legend_counts=show_legend_counts,
-        show_other_languages=show_other_languages,
-        group_by=group_by,
-        chart_type=chart_type,
-    )

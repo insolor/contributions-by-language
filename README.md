@@ -111,6 +111,9 @@ Set `show_other_languages = false` or pass `--no-show-other-languages` to hide
 this group. Its commits are excluded from chart totals. Pass
 `--show-other-languages` to show the group again for a run.
 
+Set `title = "My commit history"` in the settings file or pass
+`--title "My commit history"` to customize the chart heading.
+
 Commit counts appear in the legend by default. Set `show_legend_counts = false`
 in the settings file or pass `--no-show-legend-counts` to hide them. Pass
 `--show-legend-counts` to enable them again for a run.

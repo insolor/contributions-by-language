@@ -2,7 +2,7 @@ from collections import Counter
 from xml.etree.ElementTree import fromstring
 
 from contributions_by_language.cache import MonthCache, MonthRecord
-from contributions_by_language.chart import render_svg
+from contributions_by_language.render import render_svg_chart
 from contributions_by_language.settings import load_settings
 
 
@@ -18,9 +18,10 @@ def main() -> None:
             record = MonthRecord.model_validate_json(line, strict=True)
             monthly[record.month] = Counter(record.counts)
 
-    svg = render_svg(
+    svg = render_svg_chart(
         monthly,
         settings.login,
+        title=settings.title,
         theme=settings.theme,
         max_colors=settings.max_colors,
         force_other_languages=settings.force_other_languages,

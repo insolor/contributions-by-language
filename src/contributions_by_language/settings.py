@@ -7,8 +7,8 @@ from pydantic import Field, model_validator
 from pydantic_config import SettingsConfig, SettingsModel
 from pydantic_settings import CliPositionalArg, CliSettingsSource
 
-from .chart import ChartType, GroupBy
 from .palette import DEFAULT_MAX_COLORS, MAX_PALETTE_COLORS
+from .svg_chart import ChartType, GroupBy
 
 DEFAULT_YEARS = 5
 
@@ -35,6 +35,7 @@ class Settings(SettingsModel):
     refresh_cache: bool = Field(
         False, description="Fetch closed months again and update the cache."
     )
+    title: str | None = Field(None, description="Custom chart title.")
     theme: Literal["light", "dark"] = Field("light", description="Chart theme.")
     chart_type: ChartType = Field("bar", description="Chart style: bar, line or area.")
     include_private: bool = Field(

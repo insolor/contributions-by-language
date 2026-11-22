@@ -8,8 +8,8 @@ from pydantic import ValidationError
 from yaml import YAMLError
 
 from .cache import MonthCache
-from .chart import render_svg
 from .history import fetch_history, fetch_months
+from .render import render_svg_chart
 from .settings import DEFAULT_YEARS, Settings, load_settings
 
 
@@ -72,9 +72,10 @@ async def _generate_chart(settings: Settings, login: str, token: str) -> None:
                 refresh=settings.refresh_cache,
                 include_private=settings.include_private,
             )
-    svg = render_svg(
+    svg = render_svg_chart(
         monthly,
         login,
+        title=settings.title,
         theme=settings.theme,
         max_colors=settings.max_colors,
         force_other_languages=settings.force_other_languages,
