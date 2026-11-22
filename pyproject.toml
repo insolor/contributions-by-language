@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Generate a yearly GitHub commit chart by repository language"
 readme = "README.md"
 license = "MIT"
-license-files = ["LICENSE"]
+license-files = ["LICENSE", "LICENSE-Linguist"]
 authors = [
     { name = "insolor", email = "2442833+insolor@users.noreply.github.com" }
 ]

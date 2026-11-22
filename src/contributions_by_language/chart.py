@@ -5,7 +5,7 @@ from itertools import groupby
 from typing import Literal
 from xml.etree.ElementTree import Element, SubElement, tostring
 
-from .palette import DEFAULT_MAX_COLORS, PALETTES, Palette
+from .palette import DEFAULT_MAX_COLORS, PALETTES, Palette, linguist_colors
 
 type GroupBy = Literal["year", "quarter", "month"]
 
@@ -248,7 +248,11 @@ class _SvgRenderer:
             ),
             key=lambda name: (-totals[name], name),
         )[:language_slots]
-        series = list(zip(languages, colors, strict=False))
+        named_colors = linguist_colors() if self.palette.use_linguist else {}
+        series = [
+            (name, named_colors.get(name.casefold(), fallback))
+            for name, fallback in zip(languages, colors, strict=False)
+        ]
         if has_no_primary:
             series.append((self.NO_PRIMARY_LANGUAGE, self.palette.no_language))
         if has_other:
