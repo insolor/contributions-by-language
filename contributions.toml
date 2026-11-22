@@ -1,8 +1,10 @@
 login = "insolor"
 all_time = true
 theme = "dark"
-max_colors = 12
-force_other_languages = ["SCSS", "JavaScript", "Makefile", "C++", "HTML", "CSS"]
+max_colors = 9
+force_other_languages = ["SCSS", "JavaScript", "Makefile", "HTML", "CSS"]
 output = "contributions.svg"
 show_legend_counts = true
 group_by = "quarter"
+chart_type = "line"
+show_other_languages = false

@@ -7,7 +7,7 @@ from pydantic import Field, model_validator
 from pydantic_config import SettingsConfig, SettingsModel
 from pydantic_settings import CliPositionalArg, CliSettingsSource
 
-from .chart import GroupBy
+from .chart import ChartType, GroupBy
 from .palette import DEFAULT_MAX_COLORS, MAX_PALETTE_COLORS
 
 DEFAULT_YEARS = 5
@@ -36,6 +36,7 @@ class Settings(SettingsModel):
         False, description="Fetch closed months again and update the cache."
     )
     theme: Literal["light", "dark"] = Field("light", description="Chart theme.")
+    chart_type: ChartType = Field("bar", description="Chart style: bar or line.")
     group_by: GroupBy = Field(
         "year", description="Bar interval: year, quarter or month."
     )
@@ -51,6 +52,9 @@ class Settings(SettingsModel):
     )
     show_legend_counts: bool = Field(
         True, description="Show commit counts in the chart legend."
+    )
+    show_other_languages: bool = Field(
+        True, description="Show the Other languages group."
     )
 
     @model_validator(mode="after")

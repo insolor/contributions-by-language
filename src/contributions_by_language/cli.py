@@ -49,7 +49,9 @@ def main() -> None:
             max_colors=settings.max_colors,
             force_other_languages=settings.force_other_languages,
             show_legend_counts=settings.show_legend_counts,
+            show_other_languages=settings.show_other_languages,
             group_by=settings.group_by,
+            chart_type=settings.chart_type,
         )
         settings.output.write_text(svg, encoding="utf-8")
     except ValidationError as error:

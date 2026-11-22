@@ -1,6 +1,6 @@
 # Contributions by language
 
-A command-line tool that generates a stacked bar chart in SVG format for a GitHub profile README. Each bar shows commit contributions for a calendar year, quarter or month, grouped by the primary language of each repository.
+A command-line tool that generates stacked bar and smoothed line charts in SVG format for a GitHub profile README. The charts show commit contributions by the primary language of each repository for calendar years, quarters or months.
 
 ![Yearly GitHub commits by repository language](contributions.svg)
 
@@ -64,6 +64,10 @@ per year. The first and last years occupy a full calendar year, with empty
 space for periods outside the available data. Segment tooltips identify the quarter or month. The default is
 `--group-by year`.
 
+Use `--chart-type line` for a smoothed line per language or `--chart-type bar`
+for stacked bars. Lines reach zero on either side of a gap and break between
+consecutive periods with zero commits.
+
 ## Settings file
 
 The command loads `contributions.toml` from the current directory if it exists.
@@ -73,6 +77,7 @@ login = "username"
 all_time = true
 theme = "dark"
 group_by = "year"
+chart_type = "bar"
 max_colors = 6
 force_other_languages = ["SCSS", "Jupyter Notebook", "JavaScript"]
 output = "contributions-dark.svg"
@@ -92,6 +97,9 @@ boolean. Keep the token in `GITHUB_TOKEN` or `GH_TOKEN`.
 
 Languages listed in `force_other_languages` always go under **Other languages**.
 Language names are matched case-insensitively.
+Set `show_other_languages = false` or pass `--no-show-other-languages` to hide
+this group. Its commits are excluded from chart totals. Pass
+`--show-other-languages` to show the group again for a run.
 
 Commit counts appear in the legend by default. Set `show_legend_counts = false`
 in the settings file or pass `--no-show-legend-counts` to hide them. Pass
