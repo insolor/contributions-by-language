@@ -6,13 +6,32 @@ A command-line tool that generates a stacked bar chart in SVG format for a GitHu
 
 ## Generate the chart
 
-Run with Python 3.14 and uv. Supply a GitHub token in `GITHUB_TOKEN` or `GH_TOKEN`. If you already use an authenticated GitHub CLI, you can pass its token for this command only.
+Run with Python 3.14 and uv. Set `GITHUB_TOKEN` (or `GH_TOKEN`) in your shell:
 
 ```sh
-GITHUB_TOKEN="$(gh auth token)" uv run contributions-by-language insolor --years 5
+export GITHUB_TOKEN='your-github-token'
+uv run contributions-by-language username --years 5
 ```
 
-Copy the generated `contributions.svg` to the root of your profile repository (for example, `insolor/insolor`) and add this to its README.
+If you already use an authenticated GitHub CLI, you can pass its token for this command only:
+
+```sh
+GITHUB_TOKEN="$(gh auth token)" uv run contributions-by-language username --years 5
+```
+
+You can also put the token in a file named `.env` in the project directory:
+
+```dotenv
+GITHUB_TOKEN=your-github-token
+```
+
+Pass `--env-file .env` to have uv load the token for the command:
+
+```sh
+uv run --env-file .env contributions-by-language username --years 5
+```
+
+Copy the generated `contributions.svg` to the root of your profile repository (for example, `username/username`) and add this to its README.
 
 ```markdown
 ![Yearly GitHub commits by repository language](./contributions.svg)
@@ -24,13 +43,13 @@ The command reports how many months it has fetched from GitHub on standard error
 The default theme is light. To generate a dark chart as a separate SVG, run:
 
 ```sh
-uv run --env-file .env contributions-by-language insolor --theme dark --output contributions-dark.svg
+uv run --env-file .env contributions-by-language username --theme dark --output contributions-dark.svg
 ```
 
 ## Include all available history
 
 ```sh
-uv run --env-file .env contributions-by-language insolor --all-time
+uv run --env-file .env contributions-by-language username --all-time
 ```
 
 With `GITHUB_TOKEN` or `GH_TOKEN` already set in your environment, omit `--env-file .env`.
@@ -50,7 +69,7 @@ space for periods outside the available data. Segment tooltips identify the quar
 The command loads `contributions.toml` from the current directory if it exists.
 
 ```toml
-login = "insolor"
+login = "username"
 all_time = true
 theme = "dark"
 group_by = "year"
