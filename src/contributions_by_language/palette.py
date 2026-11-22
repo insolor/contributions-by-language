@@ -35,8 +35,21 @@ DARK = Palette(
     background="#171717",
     foreground="#e6e6e6",
     grid="#363636",
-    no_language=LIGHT.no_language,
-    languages=LIGHT.languages[:3] + ("#955473",) + LIGHT.languages[4:],
+    no_language="#737373",
+    languages=(
+        "#0047ab",
+        "#e88400",
+        "#007a4d",
+        "#a16ba8",
+        "#5d2387",
+        "#619eb8",
+        "#b56348",
+        "#63401f",
+        "#147d89",
+        "#913b57",
+        "#a1844b",
+        "#91a621",
+    ),
 )
 
 PALETTES = {"light": LIGHT, "dark": DARK}
