@@ -1,17 +1,21 @@
+import asyncio
 import sys
 from collections import Counter
 from datetime import date, datetime
 
+from httpx import AsyncClient
 from tqdm import tqdm
 
 from .cache import MonthCache
 from .calendar import shift_month
 from .github import fetch_month, fetch_years
 
+MAX_CONCURRENT_REQUESTS = 4
 
-def fetch_months(
+
+async def fetch_months(
+    client: AsyncClient,
     login: str,
-    token: str,
     months: list[date],
     now: datetime,
     cache: MonthCache,
@@ -31,29 +35,41 @@ def fetch_months(
     if not pending:
         return monthly
 
+    limit = asyncio.Semaphore(MAX_CONCURRENT_REQUESTS)
+
+    async def download(month: date) -> Counter[str]:
+        async with limit:
+            return await fetch_month(client, login, month, now)
+
     with tqdm(
         total=len(pending), desc="Fetching commit counts", unit="month", file=sys.stderr
     ) as progress:
-        for month in pending:
-            counts = fetch_month(login, token, month, now)
-            if month < current_month:
-                cache.put(month, counts)
-            monthly[month] = counts
-            progress.set_postfix_str(f"{month:%Y-%m}", refresh=False)
-            progress.update()
+        requests = {asyncio.create_task(download(month)): month for month in pending}
+        try:
+            async for request in asyncio.as_completed(requests):
+                month = requests[request]
+                counts = request.result()
+                if month < current_month:
+                    cache.put(month, counts)
+                monthly[month] = counts
+                progress.update()
+        finally:
+            for request in requests:
+                request.cancel()
+            await asyncio.gather(*requests, return_exceptions=True)
     return {month: monthly[month] for month in months}
 
 
-def fetch_history(
+async def fetch_history(
+    client: AsyncClient,
     login: str,
-    token: str,
     now: datetime,
     cache: MonthCache,
     *,
     refresh: bool = False,
 ) -> dict[date, Counter[str]]:
     print("Looking up contribution years…", file=sys.stderr, flush=True)
-    years = fetch_years(login, token)
+    years = await fetch_years(client, login)
     current_month = now.date().replace(day=1)
     months = [
         date(year, month, 1)
@@ -63,7 +79,7 @@ def fetch_history(
     ]
     if not months or months[-1] != current_month:
         months.append(current_month)
-    fetched = fetch_months(login, token, months, now, cache, refresh=refresh)
+    fetched = await fetch_months(client, login, months, now, cache, refresh=refresh)
     month = next((month for month, counts in fetched.items() if counts), current_month)
     monthly = {}
     while month <= current_month:

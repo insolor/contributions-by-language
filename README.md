@@ -127,7 +127,8 @@ permissions and requires no contribution token.
 
 ## Local cache
 
-The first run downloads the requested history. Subsequent runs reuse completed UTC
+The first run downloads the requested history, with up to four GitHub requests
+in flight at a time. Subsequent runs reuse completed UTC
 months from the local cache and fetch the current month again. In `--all-time`
 mode, the list of contribution years is refreshed on each run.
 

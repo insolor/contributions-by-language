@@ -1,9 +1,7 @@
-import json
 from collections import Counter
 from datetime import UTC, date, datetime, time, timedelta
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
 
+import httpx
 from pydantic import BaseModel
 
 from .calendar import shift_month
@@ -35,32 +33,28 @@ query($login: String!) {
 """
 
 
-def fetch_collection[Collection: BaseModel](
-    query: str, model: type[Collection], login: str, token: str, **variables: str | int
+async def fetch_collection[Collection: BaseModel](
+    client: httpx.AsyncClient,
+    query: str,
+    model: type[Collection],
+    login: str,
+    **variables: str | int,
 ) -> Collection:
-    request = Request(
-        "https://api.github.com/graphql",
-        data=json.dumps(
-            {
-                "query": query,
-                "variables": {"login": login, **variables},
-            }
-        ).encode(),
-        headers={
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json",
-            "User-Agent": "contributions-by-language",
-        },
-    )
     try:
-        with urlopen(request, timeout=30) as response:
-            payload = response.read()
-    except HTTPError as error:
-        raise RuntimeError(f"GitHub API returned HTTP {error.code}") from error
-    except URLError as error:
-        raise RuntimeError(f"GitHub API request failed: {error.reason}") from error
+        response = await client.post(
+            "https://api.github.com/graphql",
+            json={"query": query, "variables": {"login": login, **variables}},
+        )
+        response.raise_for_status()
+    except httpx.HTTPStatusError as error:
+        raise RuntimeError(
+            f"GitHub API returned HTTP {error.response.status_code}"
+        ) from error
+    except httpx.RequestError as error:
+        reason = str(error) or type(error).__name__
+        raise RuntimeError(f"GitHub API request failed: {reason}") from error
 
-    envelope = GraphQLResponse[model].model_validate_json(payload)
+    envelope = GraphQLResponse[model].model_validate_json(response.content)
     if envelope.errors:
         messages = "; ".join(error.message for error in envelope.errors)
         raise RuntimeError(f"GitHub API: {messages}")
@@ -71,14 +65,16 @@ def fetch_collection[Collection: BaseModel](
     return envelope.data.user.collection
 
 
-def fetch_month(login: str, token: str, month: date, now: datetime) -> Counter[str]:
+async def fetch_month(
+    client: httpx.AsyncClient, login: str, month: date, now: datetime
+) -> Counter[str]:
     start = datetime.combine(month, time.min, UTC)
     end = datetime.combine(shift_month(month, 1), time.min, UTC)
-    collection = fetch_collection(
+    collection = await fetch_collection(
+        client,
         QUERY,
         MonthlyContributions,
         login,
-        token,
         **{
             "from": start.isoformat(),
             "to": min(end - timedelta(seconds=1), now).isoformat(),
@@ -109,5 +105,6 @@ def fetch_month(login: str, token: str, month: date, now: datetime) -> Counter[s
     return counts
 
 
-def fetch_years(login: str, token: str) -> set[int]:
-    return set(fetch_collection(YEARS_QUERY, ContributionYears, login, token).years)
+async def fetch_years(client: httpx.AsyncClient, login: str) -> set[int]:
+    collection = await fetch_collection(client, YEARS_QUERY, ContributionYears, login)
+    return set(collection.years)
